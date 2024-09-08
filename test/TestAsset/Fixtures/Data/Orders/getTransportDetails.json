@@ -1,0 +1,43 @@
+{
+  "payload": {
+    "TransportContent": {
+      "TransportHeader": {
+        "SellerId": "AAWQN5BSDEBVG",
+        "ShipmentId": "FBA16BG11WP0",
+        "IsPartnered": true,
+        "ShipmentType": "SP"
+      },
+      "TransportDetails": {
+        "PartneredSmallParcelData": {
+          "PackageList": [
+            {
+              "Dimensions": {
+                "Length": 15,
+                "Width": 19,
+                "Height": 15,
+                "Unit": "IN"
+              },
+              "Weight": {
+                "Value": 22,
+                "Unit": "pounds"
+              },
+              "CarrierName": "UNITED_PARCEL_SERVICE_INC",
+              "TrackingId": "1ZR78R850344135763",
+              "PackageStatus": "DELIVERED"
+            }
+          ],
+          "PartneredEstimate": {
+            "Amount": {
+              "CurrencyCode": "USD",
+              "Value": 6.87
+            },
+            "VoidDeadline": "2021-07-31T23:15:15Z"
+          }
+        }
+      },
+      "TransportResult": {
+        "TransportStatus": "CONFIRMED"
+      }
+    }
+  }
+}

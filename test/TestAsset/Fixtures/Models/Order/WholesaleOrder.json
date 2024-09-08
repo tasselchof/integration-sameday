@@ -1,0 +1,43 @@
+{
+  "id": 1,
+  "extId": "FBA123",
+  "raw": {
+    "shipmentPlan": {
+      "payload": {
+        "InboundShipmentPlans": [
+          {
+            "ShipmentId": "FBA16NT7WBH0",
+            "DestinationFulfillmentCenterId": "LAS1",
+            "ShipToAddress": {
+              "Name": "LAS1",
+              "AddressLine1": "12300 Bermuda Road",
+              "City": "HENDERSON",
+              "StateOrProvinceCode": "NV",
+              "CountryCode": "US",
+              "PostalCode": "89044-8746"
+            },
+            "LabelPrepType": "SELLER_LABEL",
+            "Items": [
+              {
+                "SellerSKU": "NO-OLBC-43P6",
+                "FulfillmentNetworkSKU": "X002YXC6N1",
+                "Quantity": 1
+              }
+            ],
+            "EstimatedBoxContentsFee": {
+              "TotalUnits": 1,
+              "FeePerUnit": {
+                "CurrencyCode": "USD",
+                "Value": 0.15
+              },
+              "TotalFee": {
+                "CurrencyCode": "USD",
+                "Value": 0.15
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

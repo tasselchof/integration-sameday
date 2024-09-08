@@ -1,0 +1,6 @@
+{
+  "name": "Sender Profile Name",
+  "addresses": [
+    "#model:Clients/Address.json"
+  ]
+}

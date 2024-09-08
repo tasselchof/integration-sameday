@@ -1,0 +1,58 @@
+[
+  {
+    "type": "Laminas\\Form\\Element\\Select",
+    "name": "integrations-shipstation-marketplace-id",
+    "options": {
+      "label": null,
+      "separator": true,
+      "required": false,
+      "value_options": {
+        "ATVPDKIKX0DER": "North America"
+      }
+    }
+  },
+  {
+    "type": "Orderadmin\\Application\\Form\\Element\\Select2",
+    "name": "shop",
+    "options": {
+      "label": "Root shop",
+      "separator": true,
+      "target_class": "Orderadmin\\Locations\\Entity\\Country",
+      "empty_option": "Select shop...",
+      "api": {
+        "url": "orderadmin\\locations\\api.rest.countries",
+        "format": {
+          "value": "item.id",
+          "js": "{{name}} ",
+          "php": "{{name}} [{{id}}]"
+        },
+        "queryBy": {
+          "filter": [
+            {
+              "type": "orx",
+              "conditions": [
+                {
+                  "field": "id",
+                  "type": "eq",
+                  "value": "{{ value }}"
+                },
+                {
+                  "field": "code",
+                  "type": "eq",
+                  "value": "{{ value }}"
+                },
+                {
+                  "field": "name",
+                  "type": "ilike",
+                  "value": "%{{ value }}%"
+                }
+              ],
+              "where": "or"
+            }
+          ]
+        }
+      }
+    },
+    "api": "api"
+  }
+]

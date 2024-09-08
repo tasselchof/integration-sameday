@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "trackingNumber": "2AR700380392644065",
+  "source": "#model:Source.json",
+  "places": "#model:DeliveryServices/Places/Places.json",
+  "integration": "#model:Integration.json",
+  "deliveryService": "#model:DeliveryServices/DeliveryService.json",
+  "sender": "#model:DeliveryServices/Sender.json"
+}

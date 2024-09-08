@@ -1,0 +1,5 @@
+{
+  "id": 1,
+  "notFormal": "Sender Address Not Formal",
+  "locality": "#model:Locations/Locality.json"
+}

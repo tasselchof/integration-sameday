@@ -1,0 +1,6 @@
+{
+  "id": 1,
+  "state": "pending_queued",
+  "shop": "#model:Shop.json",
+  "source": "#model:Source.json"
+}

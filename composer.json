@@ -1,24 +1,98 @@
 {
-  "name": "octavawms/integration-sameday",
-  "description": "Integration with Sameday",
+  "name": "octava/integrations-sameday",
+  "type": "zend-module",
+  "description": "Octava Sameday integration",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "version": "0.0.1",
+  "keywords": [],
   "authors": [
     {
       "name": "Maxim Gasumyants",
       "email": "m@gasumyants.com"
     }
   ],
-  "type": "library",
-  "require": {
-    "php": "^8.2"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "11.4.x-dev"
-  },
-  "license": "proprietary",
-  "autoload": {
-    "psr-4": {
-      "Octavawms\\Integration\\Sameday\\": "src/"
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    },
+    "zf": {
+      "module": "Octava\\Integrations\\Sameday"
     }
   },
-  "minimum-stability": "dev"
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://dev.env.orderadmin.eu/composer/"
+    }
+  ],
+  "require": {
+    "php": "~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0",
+    "ext-json": "*",
+    "ext-posix": "*",
+    "ext-pcntl": "*",
+    "ext-fileinfo": "*",
+    "api-skeletons/doctrine-orm-hydration-module": "dev-master as 1.0.1",
+    "orderadmin/orderadmin-application": "^1.24",
+    "orderadmin/orderadmin-integrations": "^1.1",
+    "orderadmin/orderadmin-products": "^1.14",
+    "orderadmin/orderadmin-delivery-services": "^1.19",
+    "orderadmin/orderadmin-locations": "~0.15",
+    "sameday-courier/php-sdk": "*"
+  },
+  "require-dev": {
+    "laminas/laminas-coding-standard": "~2.2.0",
+    "laminas/laminas-http": "^2.5.4",
+    "laminas/laminas-stdlib": "^2.7.8 || ^3.0.1",
+    "phpunit/phpunit": "^9.3",
+    "vlucas/phpdotenv": "^5.4",
+    "phpmetrics/phpmetrics": "^2.7",
+    "squizlabs/php_codesniffer": "3.*",
+    "ppito/laminas-whoops": "^2.2",
+    "psalm/plugin-phpunit": "^0.16.0",
+    "vimeo/psalm": "^4.7",
+    "laminas/laminas-test": "4.1.x-dev",
+    "rector/rector": "^0.17"
+  },
+  "suggest": {
+    "ext-gearman": "An extension to execute background tasks"
+  },
+  "autoload": {
+    "psr-4": {
+      "Octava\\Integrations\\Sameday\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Orderadmin\\ApplicationTest\\": "vendor/orderadmin/orderadmin-application/test/",
+      "Octava\\Integrations\\SamedayTest\\": "test/"
+    }
+  },
+  "classmap": [
+    "./src/Module.php"
+  ],
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "cweagans/composer-patches": true,
+      "oomphinc/composer-installers-extender": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "codeception/c3": true,
+      "laminas/laminas-dependency-plugin": true,
+      "laminas/laminas-component-installer": true,
+      "laminas-api-tools/api-tools-asset-manager": true
+    }
+  },
+  "scripts": {
+    "cs-check": "phpcs",
+    "cs-fix": "phpcbf",
+    "test": "phpunit --colors=always",
+    "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+    "static-analysis": "psalm `--shepherd --stats`"
+  },
+  "support": {
+    "issues": "https://orderadmin.freshdesk.com/support/tickets/new",
+    "source": "https://bitbucket.org/orderadmin/integrations-sameday",
+    "docs": "https://orderadmin.freshdesk.com/support/home"
+  }
 }

@@ -1,0 +1,16 @@
+{
+  "ShipmentId": "FBA16310B2V2",
+  "ShipmentName": "FBA STA (04\/19\/2021 20:01)-LGB8",
+  "ShipFromAddress": {
+    "Name": "V DISTRIBUTION",
+    "AddressLine1": "12411 Fielding circle APT 5451",
+    "City": "Playa Vista",
+    "StateOrProvinceCode": "CA",
+    "CountryCode": "US",
+    "PostalCode": "90094"
+  },
+  "DestinationFulfillmentCenterId": "LGB8",
+  "ShipmentStatus": "CLOSED",
+  "LabelPrepType": "SELLER_LABEL",
+  "BoxContentsSource": "INTERACTIVE"
+}

@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "deliveryRequest": "#model:DeliveryServices/DeliveryRequest.json",
+  "state": "active",
+  "items": [
+    {
+      "extId": "NO-OLBC",
+      "name": "Tiger Stick2",
+      "count": 4,
+      "payment": 10
+    }
+  ]
+}

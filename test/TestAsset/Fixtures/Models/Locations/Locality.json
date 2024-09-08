@@ -1,0 +1,7 @@
+{
+  "id": 1,
+  "name": "Los Angeles",
+  "postcode": "1234",
+  "country": "#model:Locations/Country.json",
+  "area": "#model:Locations/Area.json"
+}

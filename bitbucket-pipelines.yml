@@ -1,0 +1,56 @@
+image:
+  name: php:8.0-fpm
+
+definitions:
+  services:
+    postgres:
+      image: postgres:14.2
+      environment:
+        POSTGRES_DB: 'pipelines'
+        POSTGRES_USER: 'test_user'
+        POSTGRES_PASSWORD: 'test_user_password'
+
+  steps:
+    - step: &buildandtest
+        caches:
+          - composer
+        name: Build & Test
+        script:
+          - apt-get update && apt-get install -y sudo libfreetype6-dev libjpeg62-turbo-dev libpng-dev libzip-dev zip
+          - apt-get install -y zlib1g-dev libc-client-dev libkrb5-dev libcurl3-gnutls libcurl4-openssl-dev libpcre3-dev libxml2 libxml2-dev && \
+          - apt-get install -y git-core libpng-dev icu-devtools libicu-dev libmcrypt4 libmcrypt-dev libpq-dev libtidy-dev && \
+          - apt-get install -y libgearman-dev libmemcached-dev redis
+          - sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          #          - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+          #          - apt-get install -y postgresql-dev
+          - docker-php-ext-install pcntl intl zip pdo_pgsql exif bcmath soap
+          - docker-php-ext-configure gd --with-freetype --with-jpeg
+          - docker-php-ext-install gd
+          - pecl install gearman memcached redis
+          - docker-php-ext-enable gearman memcached redis
+          - sudo groupadd docker
+          - sudo adduser orderadmin
+          - sudo usermod -aG docker orderadmin
+          - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          - composer -V
+          - php -r "file_exists('.env') || copy('.env.example', '.env');"
+          - chmod 755 /usr/local/bin/composer
+          - su orderadmin -c "composer install"
+          - su orderadmin -c "composer test"
+        services:
+          - postgres
+
+pipelines:
+  pull-requests:
+    '**':
+      - step: *buildandtest
+  branches:
+    master:
+      - step: *buildandtest
+#        - step:
+#            name: Lint
+#            script:
+#              - composer install
+#              - ./vendor/bin/phplint . --exclude=vendor
+#            caches:
+#              - composer

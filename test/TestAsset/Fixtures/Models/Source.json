@@ -1,0 +1,6 @@
+{
+  "id": 1,
+  "state": "active",
+  "handler": "shipstation",
+  "integration": "#model:Integration.json"
+}
