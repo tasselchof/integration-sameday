@@ -1,0 +1,25 @@
+{
+  "payload": {
+    "ItemData": [
+      {
+        "ShipmentId": "FBA16310B2V2",
+        "SellerSKU": "TJ_EverydaySeasoning2pk",
+        "FulfillmentNetworkSKU": "X002G21NCP",
+        "QuantityShipped": 5,
+        "QuantityReceived": 0,
+        "QuantityInCase": 0,
+        "PrepDetailsList": [
+          {
+            "PrepInstruction": "Labeling",
+            "PrepOwner": "SELLER"
+          },
+          {
+            "PrepInstruction": "BubbleWrapping",
+            "PrepOwner": "SELLER"
+          }
+        ]
+      }
+    ],
+    "NextToken": "AAAAAAAAAAAJlfUEK\/PIFudxWK5RnWWlXQEAAAAAAACHWFgv3EJgDyhTUjT4z1TJxJGCgpa7uJUgHjAnRUuiEO1dz5F0gZ\/BQjRX6M9zrvmrM1jRCD80U\/YTgxU3sFfHZyz72BUMlA\/oJsyVpXO4NPDfoi7njq9PiG8Bt9g0OJqYvOxNtQkiJ7jYnkgrIt6uCyP68+Maog9CzzlqZCuhp53PARTwHm00LygveL8Dyh\/SPf\/2KX2CSrMgSZhxclk+r\/6vKnXnbeYKr3ecbRdwhMcni5wUDvtBL\/ofGX5Tcx1UHh8difl9L86thd0nQMXSVBC9L4ym6LcHIWfBas6v0g20EGFf7yB7Tb9aOoAiTJ3S\/rDVI+W+wkwLT2vaULNT9QfZnaxYzbJ4L6pDs2Q8VWVFQ4yvhtuFu\/boHQE7+suZcD\/4peQImU8RrtoZ382YhYCI\/Q2aeJCgAdyBbPvM0Jz3oAxGoSd4T5N2d2\/NRBUg6LM2iL4vIiaQXc7C"
+  }
+}

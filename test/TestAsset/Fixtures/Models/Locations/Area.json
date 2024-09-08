@@ -1,0 +1,5 @@
+{
+  "id": 1,
+  "extId": "LA",
+  "country": "#model:Locations/Country.json"
+}

@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "state": "normal",
+  "sku": "NO-OLBC-43P6",
+  "eav": {
+    "integrations-shipstation-offer-asin": {
+        "ATVPDKIKX0DER" : "B00GGV6ZDI"
+      },
+    "integrations-shipstation-offer-fnsku": {
+      "ATVPDKIKX0DER" : "B00GGV6ZDI"
+    },
+    "integrations-shipstation-offer-sku": "NO-OLBC-43P6",
+    "integrations-shipstation-offer-prep-instructions": [
+      "Labeling"
+    ]
+  }
+}

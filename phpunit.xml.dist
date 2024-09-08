@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+        bootstrap="vendor/autoload.php"
+        colors="true">
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </coverage>
+
+    <php>
+        <env name="ORDERADMIN_GEARMAN_DEBUG" value="1"/>
+        <env name="ORDERADMIN_DEBUG_MODE" value="0"/>
+        <env name="ORDERADMIN_LOG_SHOW" value="0"/>
+        <const name="APPLICATION_DATA_PATH" value="data"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Sameday Module Tests">
+            <directory>./test</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

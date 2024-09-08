@@ -1,0 +1,23 @@
+{
+  "InvalidSKUList": [],
+  "SKUPrepInstructionsList": [
+    {
+      "ASIN": "B00GGV6ZDI",
+      "SellerSKU": "NO-OLBC-43P6",
+      "PrepGuidance": "NoAdditionalPrepRequired",
+      "BarcodeInstruction": "RequiresFNSKULabel",
+      "PrepInstructionList": [
+        "Labeling"
+      ],
+      "ShipStationPrepFeesDetailsList": [
+        {
+          "FeePerUnit": {
+            "Value": 0.3,
+            "CurrencyCode": "USD"
+          },
+          "PrepInstruction": "Labeling"
+        }
+      ]
+    }
+  ]
+}

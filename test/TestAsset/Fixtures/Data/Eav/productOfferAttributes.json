@@ -1,0 +1,22 @@
+[
+  {
+    "type": "Laminas\\Form\\Element\\Text",
+    "name": "integrations-shipstation-offer-asin[ATVPDKIKX0DER]",
+    "options": {
+      "label": null,
+      "template": "built-in",
+      "separator": true,
+      "required": false
+    }
+  },
+  {
+    "type": "Laminas\\Form\\Element\\Text",
+    "name": "integrations-shipstation-offer-fnsku[ATVPDKIKX0DER]",
+    "options": {
+      "label": null,
+      "template": "built-in",
+      "separator": true,
+      "required": false
+    }
+  }
+]

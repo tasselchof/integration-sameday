@@ -1,0 +1,682 @@
+<?php
+use Orderadmin\Application\Helper\DateTimeHelper;
+use Orderadmin\Integrations\Entity\Source;
+
+$dateTimeHelper = new DateTimeHelper();
+
+$title = sprintf($this->translate('Integration source %s'), $source->getId());
+$this->headTitle($title);
+$this->header($title);
+
+/**
+ * @var $source Source
+ * @var $form   \Orderadmin\Integrations\Form\SourcesForm
+ */
+
+$settings = $source->getSettings();
+?>
+<?php echo $this->form()->openTag($form); ?>
+<div class="ibox">
+    <div class="ibox-content">
+        <?php
+        $flash = $this->flashMessenger()->setPluginFlashMessenger(
+            $controller->flashMessenger());
+
+        $flash->setMessageOpenFormat(
+            '<div%s>
+             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                 &times;
+             </button>
+             <ul><li>')
+            ->setMessageSeparatorString('</li><li>')
+            ->setMessageCloseString('</li></ul></div>');
+        echo $flash->render(
+            'error', ['alert', 'alert-dismissible', 'alert-danger']);
+        echo $flash->render(
+            'info', ['alert', 'alert-dismissible', 'alert-info']);
+        echo $flash->render(
+            'default', ['alert', 'alert-dismissible', 'alert-warning']);
+        echo $flash->render(
+            'success', ['alert', 'alert-dismissible', 'alert-success']);
+        ?>
+
+        <div class="row">
+            <div class="col-lg-5">
+                <ul class="list-group clear-list m-t">
+                    <li class="list-group-item fist-item">
+                        <?php echo $this->translate('Status'); ?>:
+                        <span class="pull-right">
+                            <?php if ($source->getState() == Source::STATE_ACTIVE) { ?>
+                                <span class="label label-primary"><?php echo $this->translate(
+                                        'Active'); ?></span>
+                                <a href="<?php echo $this->url(
+                                    'apps/sameday/default',
+                                    [
+                                        'action'    => 'view',
+                                        'id' => $source->getId(),
+                                        'subAction' => 'deactivate'
+                                    ]
+                                ) ?>" class="btn btn-xs btn-danger" style="height: 20px; font-size: 10px; padding-top: 2px; font-weight: 600;">
+                                    <?php echo $this->translate('Deactivate'); ?>
+                                </a>
+                            <?php } else {?>
+                                <span class="label label-danger"><?php echo $this->translate(
+                                        'Inactive'); ?></span>
+                                <a href="<?php echo $this->url(
+                                    'apps/sameday/default',
+                                    [
+                                        'action'    => 'view',
+                                        'id' => $source->getId(),
+                                        'subAction' => 'activate'
+                                    ]
+                                ) ?>" class="btn btn-xs btn-primary" style="height: 20px; font-size: 10px; padding-top: 2px; font-weight: 600;">
+                                <?php echo $this->translate('Activate'); ?>
+                            </a>
+                            <?php } ?>
+                        </span>
+                    </li>
+
+                    <li class="list-group-item">
+                        <?php echo $this->translate('Created'); ?>:
+                        <span class="pull-right">
+                                <?php echo $this->dateTime(
+                                    $source->getCreated()); ?>
+                            </span>
+                    </li>
+
+                    <?php if (! is_null($source->getUpdated())) : ?>
+                        <li class="list-group-item">
+                            <?php echo $this->translate('Last Updated'); ?>:
+                            <span class="pull-right">
+                                <?php echo $this->dateTime(
+                                    $source->getUpdated()); ?>
+                            </span>
+                        </li>
+                    <?php endif; ?>
+
+                    <li class="list-group-item">
+                        <?php echo $this->translate('Products'); ?>:
+                        <span class="pull-right">
+                                <input type="checkbox" name="sections"
+                                       value="Products"
+                                       class="i-checks integrations" <?php echo ! empty($settings['Products']['active'])
+                                ? 'checked ' : '' ?> />
+                            </span>
+                    </li>
+
+                    <li class="list-group-item">
+                        <?php echo $this->translate(
+                            'Delivery requests'); ?>:
+                        <span class="pull-right">
+                                <input type="checkbox" name="sections"
+                                       value="DeliveryServices"
+                                       class="i-checks integrations" <?php echo ! empty($settings['DeliveryServices']['active'])
+                                    ? 'checked ' : '' ?> />
+                            </span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-7" id="cluster_info">
+                <ul class="list-group clear-list m-t">
+                    <li class="list-group-item fist-item">
+                        <?php echo $this->translate('Handler'); ?>:
+                        <span class="pull-right">
+                                <?php echo $source->getHandler(); ?>
+                            </span>
+                    </li>
+                    <li class="list-group-item">
+                        <?php
+                        $apiKey = $form->get('settings[auth][key]');
+                        echo $this->editableViewText($apiKey);
+                        ?>
+                    </li>
+                    <li class="list-group-item">
+                        <?php
+                        $whId = $form->get('settings[auth][secret]');
+                        echo $this->editableViewText($whId);
+                        ?>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <?php if (! empty($source->getSettings()['Products']['active'])) : ?>
+                    <li><a href="#products"
+                           data-toggle="tab"><?php echo $this->translate(
+                                'Products'); ?></a>
+                    </li>
+                <?php endif; ?>
+                <?php if (! empty($source->getSettings()['DeliveryServices']['active'])) : ?>
+                    <li>
+                        <a href="#deliveryRequests"
+                           data-toggle="tab"><?php echo $this->translate(
+                                'Delivery requests'); ?>
+                        </a>
+                    </li>
+                <?php endif; ?><?php if ($this->users()
+                    ->isAdmin()) : ?>
+                    <li>
+                        <a href="#raw"
+                           data-toggle="tab"><?php echo $this->translate(
+                                'Raw'); ?>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#versions"
+                           data-toggle="tab"><?php echo $this->translate(
+                                'Versions'); ?>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+
+            <div class="tab-content">
+                <?php if (! empty($source->getSettings()['Products']['active'])) : ?>
+                    <div class="tab-pane" id="products">
+                        <div class="panel-body">
+                            <?php if (count($productShops)
+                                == 0) : ?>
+                                <div class="alert alert-warning">
+                                    <?php echo $this->translate(
+                                        '<strong>Warning!</strong> There is no product shops registered in the system.'); ?>
+                                </div>
+                            <?php else : ?>
+
+                                <?php
+                                $filters = [];
+                                if (! empty($source->getSettings()['Products']['Orders']['filter'])) {
+                                    foreach (
+                                        $source->getSettings()['Products']['Orders']['filter']
+                                        as $filter
+                                    ) {
+                                        $field = key($filter);
+                                        $value = current(
+                                            $filter);
+
+                                        $filters[$field]
+                                            = $value;
+                                    }
+                                }
+                                ?>
+
+                                <div class="tabs-left">
+                                    <ul class="nav nav-tabs">
+<!--                                        <li class="active">-->
+<!--                                            <a data-toggle="tab"-->
+<!--                                               href="#tab-shop-1">--><?php //echo $this->translate(
+//                                                    'Shops'); ?><!--</a>-->
+<!--                                        </li>-->
+                                        <li>
+                                            <a data-toggle="tab"
+                                               href="#tab-shop-2"><?php echo $this->translate(
+                                                    'Settings'); ?></a>
+                                        </li>
+                                        <li>
+                                            <a data-toggle="tab"
+                                               href="#tab-shop-3"><?php echo $this->translate(
+                                                    'Orders States Monitor'); ?></a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="tab-content">
+<!--                                        <div id="tab-shop-1" class="tab-pane active">-->
+<!--                                            <div class="panel-body">-->
+<!--                                                --><?php //if (empty($productShops)) : ?>
+<!--                                                    <div class="alert alert-warning">-->
+<!--                                                        --><?php //echo $this->translate(
+//                                                            '<strong>Warning!</strong> There is no product shops registered in the system.'); ?>
+<!--                                                    </div>-->
+<!--                                                --><?php //else : ?>
+<!--                                                    <table class="table table-striped" id="shopsTable">-->
+<!--                                                        <thead>-->
+<!--                                                        <tr>-->
+<!--                                                            <th>--><?php //echo $this->translate(
+//                                                                    'Shop'); ?><!--</th>-->
+<!--                                                            <th>--><?php //echo $this->translate(
+//                                                                    'Sameday Shop'); ?><!--</th>-->
+<!--                                                            <th>--><?php //echo $this->translate(
+//                                                                    'Sameday store'); ?><!--</th>-->
+<!--                                                            <th>--><?php //echo $this->translate(
+//                                                                    'Active'); ?><!--</th>-->
+<!--                                                        </tr>-->
+<!--                                                        </thead>-->
+<!--                                                        <tbody>-->
+<!--                                                        --><?php
+//                                                        $currentShops = array_combine(
+//                                                            array_column($productShops, 'extId'),
+//                                                            $productShops
+//                                                        );
+//
+//                                                        $i = 0;
+//                                                        foreach ($this->sameday['dictionaries']['stores'] as $id => $shop) {
+//                                                            $currentShop = null;
+//                                                            if (!empty($currentShops[$shop['extId']])) {
+//                                                                $currentShop = $currentShops[$shop['extId']];
+//                                                            }
+//                                                            ?>
+<!--                                                            <tr>-->
+<!--                                                                <td>-->
+<!--                                                                    <select name="settings[Products][shops][--><?php //echo $i; ?><!--][id]" class="shopId">-->
+<!--                                                                        --><?php
+//                                                                        if (!empty($currentShop)) { ?>
+<!--                                                                            <option data-oa-shop-name="--><?php //echo $currentShop['oaShopName'];?><!--" value="--><?php //echo $currentShop['id'];?><!--" selected>--><?php //echo $currentShop['oaShopName'];?><!--</option>-->
+<!--                                                                            <option value="">--Select OA shop--</option>-->
+<!--                                                                        --><?php //} else {
+//                                                                            ?>
+<!--                                                                            <option value="" selected>--Select OA shop--</option>-->
+<!--                                                                            --><?php
+//                                                                        }
+//                                                                        foreach ($productShops as $productShop) {
+//                                                                            if (!empty($currentShop) && $currentShop['id'] == $productShop->getId()) {
+//                                                                                continue;
+//                                                                            }
+//                                                                            ?>
+<!--                                                                            <option data-oa-shop-name="--><?php //echo $productShop->getName();?><!--" value="--><?php //echo $productShop->getId();?><!--">--><?php //echo $productShop->getName();?><!--</option>-->
+<!--                                                                        --><?php //}
+//                                                                        ?>
+<!--                                                                    </select>-->
+<!--                                                                </td>-->
+<!--                                                                <td>-->
+<!--                                                                    <input class="shopExtId" type="hidden" name="settings[Products][shops][--><?php //echo $i; ?><!--][extId]" value="--><?php
+//                                                                    echo $shop['extId'];
+//                                                                    ?><!--" />-->
+<!--                                                                    --><?php
+//                                                                    echo $shop['name'];
+//                                                                    ?>
+<!--                                                                </td>-->
+<!--                                                                <td>-->
+<!--                                                                    <input type="checkbox"-->
+<!--                                                                           name="settings[Products][shops][--><?php //echo $i; ?><!--][active]"-->
+<!--                                                                           data-target="Products"-->
+<!--                                                                           value=""-->
+<!--                                                                           class="i-checks shopActive" --><?php //echo !empty($currentShop['active'])
+//                                                                        ? 'checked '
+//                                                                        : '' ?><!-- />-->
+<!--                                                                </td>-->
+<!--                                                            </tr>-->
+<!--                                                            --><?php
+//                                                            $i++;
+//                                                        }
+//                                                        ?>
+<!--                                                        </tbody>-->
+<!--                                                    </table>-->
+<!---->
+<!--                                                    <btn id="saveMatrix"-->
+<!--                                                         class="btn btn-lg btn-primary">-->
+<!--                                                        --><?php //echo $this->translate('Save shops matrix'); ?>
+<!--                                                    </btn>-->
+<!--                                                --><?php //endif; ?>
+<!--                                            </div>-->
+<!--                                        </div>-->
+                                        <div id="tab-shop-2"
+                                             class="tab-pane">
+                                            <div class="panel-body">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th><?php echo $this->translate(
+                                                                'Setting'); ?></th>
+                                                        <th><?php echo $this->translate(
+                                                                'Value'); ?></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td><?php echo $this->translate(
+                                                                'Auto-confirm orders'); ?></td>
+                                                        <td>
+                                                            <span
+                                                                    class="col-xs-11 col-xs-offset-1 col-sm-8 col-sm-offset-0 editable-click editable-checkbox"
+                                                                    data-type="select"
+                                                                    data-pk="<?php echo $source->getId(); ?>"
+                                                                    data-url="<?php echo $this->url(
+                                                                        'rest-api/integrations/sources',
+                                                                        ['id' => $source->getId()]); ?>"
+                                                                    data-name="settings[Products][Orders][options][auto-confirm]"><?php echo isset($settings['Products']['Orders']['options']['auto-confirm'])
+                                                                    ? $settings['Products']['Orders']['options']['auto-confirm']
+                                                                    : ''; ?>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div id="tab-shop-3" class="tab-pane">
+                                            <div class="panel-body">
+
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th><?php echo $this->translate('Title'); ?></th>
+                                                        <th><?php echo $this->translate('Code'); ?></th>
+                                                        <th><?php echo $this->translate('Sameday'); ?></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <?php
+                                                    foreach (
+                                                        $orders['states']
+                                                        as $state =>
+                                                        $value
+                                                    ) :
+                                                        ?>
+                                                        <tr>
+                                                            <td>
+                                                                <?php echo $state; ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php echo $this->translate($value); ?>
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                        class="col-xs-11 col-xs-offset-1 col-sm-8 col-sm-offset-0 editable-click samedayOrderStates"
+                                                                        data-type="select"
+                                                                        data-pk="<?php echo $source->getId(); ?>"
+                                                                        data-url="<?php echo $this->url(
+                                                                            'rest-api/integrations/sources',
+                                                                            ['id' => $source->getId()]); ?>"
+                                                                        data-name="settings[Products][Orders][monitor][states][<?php echo $value; ?>]"><?php echo isset($settings['Products']['Orders']['monitor']['states'][$value])
+                                                                        ? $settings['Products']['Orders']['monitor']['states'][$value]
+                                                                        : ''; ?>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    <?php
+                                                    endforeach; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (! empty($source->getSettings()['DeliveryServices']['active'])
+                ) : ?>
+                    <div class="tab-pane" id="deliveryRequests">
+                        <div class="panel-body">
+                            <?php if (count(
+                                    $deliveryRequests['senders'])
+                                == 0) : ?>
+                                <div class="alert alert-warning">
+                                    <?php echo $this->translate(
+                                        '<strong>Warning!</strong> There is no senders registered in the system.'); ?>
+                                </div>
+                            <?php else : ?>
+                                <div class="tabs-left">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active">
+                                            <a data-toggle="tab"
+                                               href="#tab-dr-settings"><?php echo $this->translate(
+                                                    'Settings'); ?></a>
+                                        </li>
+                                        <li>
+                                            <a data-toggle="tab"
+                                               href="#tab-dr-monitor"><?php echo $this->translate(
+                                                    'Monitor states'); ?></a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="tab-content">
+                                        <div id="tab-dr-settings"
+                                             class="tab-pane active">
+                                            <div class="panel-body">
+                                                <ul class="list-group clear-list m-t">
+                                                    <li class="list-group-item">
+                                                        <?php
+                                                        $senderElement
+                                                            = $form->get(
+                                                            'settings[DeliveryServices][sender]');
+                                                        echo $this->editableViewSelect(
+                                                            $senderElement);
+                                                        ?>
+                                                    </li>
+                                                    <li class="list-group-item">
+                                                        <?php
+                                                        $dsIntegrationElement
+                                                            = $form->get(
+                                                            'settings[DeliveryServices][integration]');
+                                                        echo $this->editableViewSelect(
+                                                            $dsIntegrationElement);
+                                                        ?>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div id="tab-dr-monitor"
+                                             class="tab-pane">
+                                            <div class="panel-body">
+
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th><?php echo $this->translate(
+                                                                'Orderadmin state'); ?></th>
+                                                        <th><?php echo $this->translate(
+                                                                'Sameday state'); ?></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <?php
+                                                    foreach (
+                                                        $deliveryRequests['states']
+                                                        as
+                                                        $state
+                                                    =>
+                                                        $value
+                                                    ) :
+                                                        ?>
+                                                        <tr>
+                                                            <td>
+                                                                <?php echo $this->translate(
+                                                                    $value); ?>
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                        class="col-xs-11 col-xs-offset-1 col-sm-8 col-sm-offset-0 editable-click samedayOrderStates"
+                                                                        data-type="select"
+                                                                        data-pk="<?php echo $source->getId(); ?>"
+                                                                        data-url="<?php echo $this->url(
+                                                                            'rest-api/integrations/sources',
+                                                                            ['id' => $source->getId()]); ?>"
+                                                                        data-name="settings[DeliveryServices][monitor][states][<?php echo $value; ?>]"><?php echo isset($settings['DeliveryServices']['monitor']['states'][$value])
+                                                                        ? $settings['DeliveryServices']['monitor']['states'][$value]
+                                                                        : ''; ?>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    <?php
+                                                    endforeach; ?>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($this->users()->isAdmin()) : ?>
+                    <div class="tab-pane" id="raw">
+                        <div class="panel-body">
+                                            <pre><?php print_r(
+                                                    json_encode(
+                                                        $source->getSettings(),
+                                                        JSON_PRETTY_PRINT
+                                                        + JSON_UNESCAPED_UNICODE)); ?></pre>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="versions">
+                        <div class="panel-body">
+                            <?php
+                            echo $this->versions(
+                                $source,
+                                \Orderadmin\Integrations\Entity\Log\SourceLogEntry::class)
+                            ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php echo $this->form()->closeTag($form); ?>
+
+<?php echo $this->editableViewJs($form); ?>
+
+<script type="text/javascript">
+    $(function () {
+        $.fn.editable.defaults.emptytext = '<?php echo $this->translate('Empty') ?>';
+        $.fn.editable.defaults.pk = <?php echo $source->getId(); ?>;
+        $.fn.editable.defaults.placement = 'top';
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green'
+        });
+
+        $('.editable-checkbox').editable({
+            source: <?php echo json_encode(
+                [
+                    [
+                        'value' => 0,
+                        'text'  => $this->translate('No'),
+                    ],
+                    [
+                        'value' => 1,
+                        'text'  => $this->translate('Yes'),
+                    ],
+                ]); ?>
+        });
+
+        $('input.integrations').on('ifToggled', function () {
+            document.location = '<?php echo $this->url(
+                'apps/sameday/default',
+                    [
+                        'action'    => 'view',
+                        'id' => $source->getId(),
+                        'subAction' => 'integrations'
+                    ]
+            ) ?>?id=' + $(this).val()
+        });
+
+        $('.samedayOrderStates').editable({
+            source:
+            <?php
+            echo json_encode($sameday['dictionaries']['orderStates'] ?? []);
+            ?>
+        });
+
+        $('.samedayStores').editable({
+            source:
+            <?php
+            echo json_encode($sameday['dictionaries']['stores'] ?? []);
+            ?>
+        });
+
+        $('.samedayWarehouses').editable({
+            source:
+            <?php
+            echo json_encode($sameday['dictionaries']['warehouses'] ?? []);
+            ?>
+        });
+
+        $('.oaWarehouses').editable({
+            source:
+            <?php
+            echo json_encode($deliveryRequests['warehouses'] ?? []);
+            ?>
+        });
+
+        $('input[name=\'shopState\']').on('ifToggled', function () {
+            document.location = '<?php echo $this->url(
+                'apps/sameday/default',
+                ['action'    => 'view', 'id' => $source->getId(),
+                 'subAction' => 'shopState']) ?>?section=' + $(this).data('target') + '&id=' + $(this).val()
+        });
+
+        $(document).off('click', '.tabs-container.deliveryrequests .nav-tabs li a');
+        $(document).on('click', '.tabs-container.deliveryrequests .nav-tabs li a', function (evt) {
+            var $index = $(this).parent().index() + 1;
+            var parent = $(this).parents('.tabs-container');
+            $('.tab-pane.active', parent).removeClass('active');
+            $('.tab-pane:nth-of-type(' + $index + ')', parent).addClass('active');
+        });
+
+
+        $('#saveMatrix').click(function() {
+
+            let matrix = [];
+            let i = 0;
+            $('#shopsTable > tbody  > tr').each(function() {
+                if (
+                    ($(".shopActive", this).is(':checked') === false && $(".shopId option:selected", this).val() === '') ||
+                    ($(".shopActive", this).is(':checked') === false && $(".shopStoreCode option:selected", this).val() === '') ||
+                    ($(".shopActive", this).is(':checked') === true && $(".shopId option:selected", this).val() === '') ||
+                    ($(".shopActive", this).is(':checked') === true && $(".shopStoreCode option:selected", this).val() === '')
+                ) {
+                    return true;
+                }
+
+                matrix[i] = {
+                    id: $(".shopId option:selected", this).val(),
+                    oaShopName: $(".shopId option:selected", this).attr("data-oa-shop-name"),
+                    extId: $(".shopExtId", this).val(),
+                    active: $(".shopActive", this).is(':checked')
+                }
+                i++;
+            });
+            if (matrix.length !== 0) {
+                swal({
+                    title: '<?php echo $this->translate(
+                        'Saving matrix...'); ?>',
+                    showConfirmButton: false,
+                });
+
+                let data = {
+                    settings: {
+                        Products: {
+                            shops: matrix
+                        }
+                    }
+                }
+
+                $.ajax({
+                    type: 'PATCH',
+                    url: "<?php echo $this->url(
+                        'orderadmin\\integrations\\api.rest.doctrine.source',
+                        ['source_id' => $source->getId()]); ?>",
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function () {
+                        swal({
+                            title: '<?php echo $this->translate('Success'); ?>',
+                            text: '',
+                            type: 'success'
+                        })
+                        location.reload()
+                    },
+                    error: function (xhr, error) {
+                        swal({
+                            title: xhr.responseJSON.title,
+                            text: xhr.responseJSON.detail,
+                            type: 'error'
+                        })
+                    }
+                })
+            }
+        })
+    });
+</script>
