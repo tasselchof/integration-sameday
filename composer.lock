@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a1d02d741c28d1e701cd52fc261c59c",
+    "content-hash": "76a3ef501fd6d2dc73ca382b680b8231",
     "packages": [
         {
             "name": "api-skeletons/doctrine-orm-hydration-module",

@@ -84,7 +84,7 @@ return [
         ]
     ],
     'event-listeners'   => [
-        PreprocessingTaskListener::class,
+//        PreprocessingTaskListener::class,
     ],
     'input_filter_specs'            => [
     ],
