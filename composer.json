@@ -23,7 +23,7 @@
   "repositories": [
     {
       "type": "composer",
-      "url": "https://dev.env.orderadmin.eu/composer/"
+      "url": "https://repos.octavawms.com/composer/"
     }
   ],
   "require": {
