@@ -7,6 +7,8 @@ use Octava\Integrations\Sameday\Factory\Listener\SourceListenerFactory;
 use Octava\Integrations\Sameday\Listener\SourceListener;
 use Octava\Integrations\Sameday\Service\Calculation;
 use Octava\Integrations\Sameday\Service\DeliveryRequests;
+use Octava\Integrations\Sameday\Service\Loader\ServicePoints;
+use Octava\Integrations\Sameday\Service\Loader\Services;
 use Octava\Integrations\Sameday\Service\Settings;
 use Octava\Integrations\Sameday\Service\SourcesServices;
 use Orderadmin\DeliveryServices\Factory\DeliveryServiceV2Factory;
@@ -48,8 +50,9 @@ class Module implements ServiceProviderInterface
     {
         return [
             'factories' => [
-                Service\Integration::class => DeliveryServiceV2Factory::class
-//                DeliveryRequests::class             => IntegrationV2Factory::class,
+                Service\Integration::class => DeliveryServiceV2Factory::class,
+                Services::class            => DeliveryServiceV2Factory::class,
+                ServicePoints::class       => DeliveryServiceV2Factory::class,
 //                DeliveryServices\Shipment::class    => DeliveryServiceV2Factory::class,
 //                DeliveryServices\Integration::class => DeliveryServiceV2Factory::class,
 //                DeliveryServices\Calculation::class => DeliveryServiceV2Factory::class,

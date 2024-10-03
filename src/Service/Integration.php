@@ -56,6 +56,7 @@ class Integration implements
     private $username;
     private $password;
     private $response;
+    private array $request;
 
     public function getIntegrationSettings(): array
     {
@@ -253,6 +254,22 @@ class Integration implements
     public function getPassword()
     {
         return $this->password;
+    }
+
+    public function setRequest(array $request): static
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    private function getRequest(): bool|string|null
+    {
+        if (! empty($this->request)) {
+            return json_encode($this->request);
+        }
+
+        return null;
     }
 
     public function setResponse($response): static
