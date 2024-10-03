@@ -9,6 +9,7 @@
 namespace Octava\Integrations\Sameday\Service;
 
 use Orderadmin\DeliveryServices\Entity\DeliveryService;
+use Orderadmin\DeliveryServices\Entity\ServicePoint;
 use Orderadmin\Integrations\Entity\AbstractSource;
 use Orderadmin\Integrations\Entity\Products\ExpectedOffer;
 use Orderadmin\Integrations\Entity\Source;
@@ -83,6 +84,30 @@ class Convert extends AbstractConverter
                 'fedex_standard_overnight'             => 'fedex_standard_overnight',
             ],
         ];
+
+    public static function officeToServicePoint(
+        array $officeData
+    ): array {
+
+        return [
+            'extId'          => $officeData['oohId'],
+            'country'        => $officeData['countryId'],
+            'locality'       => [
+                'postcode' => $officeData['postalCode']
+            ],
+            'name'           => $officeData['name'],
+            'raw'            => $officeData,
+            'type'           => ($officeData['oohType'] == 1)
+                ? ServicePoint::TYPE_SERVICE_POINT
+                : ServicePoint::TYPE_SELF_SERVICE_POINT,
+            'rawAddress'     => trim($officeData['city'] . ', ' . $officeData['address']),
+            'rawDescription' => json_encode($officeData['schedule'], true),
+            'geo' => [
+                'latitude'  => $officeData['lat'],
+                'longitude' => $officeData['lng'],
+            ],
+        ];
+    }
 
     public static function productToExpectedOffer(
         Shop $shop,

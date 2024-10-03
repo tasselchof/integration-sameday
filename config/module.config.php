@@ -1,13 +1,12 @@
 <?php
 
 use Octava\Integrations\Sameday\Controller\AppController;
-use Octava\Integrations\Sameday\Listener\PreprocessingTaskListener;
 use Octava\Integrations\Sameday\Service\DeliveryServices\Calculation;
 use Octava\Integrations\Sameday\Service\DeliveryServices\Labels;
-use Octava\Integrations\Sameday\Service\DeliveryServices\Loader\DeliveryRequests;
 use Octava\Integrations\Sameday\Service\DeliveryServices\Shipment;
 use Octava\Integrations\Sameday\Service\Integration;
-use Orderadmin\DeliveryServices\Entity\DeliveryRequest;
+use Orderadmin\DeliveryServices\Entity\Rate;
+use Orderadmin\DeliveryServices\Entity\ServicePoint;
 use Orderadmin\Integrations\Module;
 
 return [
@@ -19,7 +18,8 @@ return [
                 'shipmentV2' => Shipment::class,
                 'labels' => Labels::class,
                 'loader'            => [
-                    DeliveryRequest::class => DeliveryRequests::class,
+                    Rate::class    => \Octava\Integrations\Sameday\Service\Loader\Services::class,
+                    ServicePoint::class => \Octava\Integrations\Sameday\Service\Loader\ServicePoints::class,
                 ],
                 'calculationV2' => Calculation::class,
             ],
