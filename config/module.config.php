@@ -1,7 +1,7 @@
 <?php
 
 use Octava\Integrations\Sameday\Controller\AppController;
-use Octava\Integrations\Sameday\Service\DeliveryServices\Calculation;
+use Octava\Integrations\Sameday\Service\Calculation;
 use Octava\Integrations\Sameday\Service\DeliveryServices\Labels;
 use Octava\Integrations\Sameday\Service\DeliveryServices\Shipment;
 use Octava\Integrations\Sameday\Service\Integration;
