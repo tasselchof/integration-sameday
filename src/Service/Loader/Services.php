@@ -52,8 +52,8 @@ class Services extends Integration implements
             foreach ($res->getServices() as $service) {
                 $rates[] = [
                     'name'  => $service->getName(),
-                    'extId' => $service->getCode(),
-                    'type'  => Rate::TYPE_SIMPLE,
+                    'extId' => $service->getId(),
+                    'type'  => Rate::TYPE_SERVICE_POINT,
                     'raw'   => $service,
                 ];
             }

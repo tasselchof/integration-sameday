@@ -80,40 +80,13 @@ class Integration implements
                 ],
             ],
             [
-                'name'       => 'servicePoint',
-                'type'       => Select2::class,
-                'options'    => [
-                    'label'          => 'Service point',
-                    'separator'      => true,
-                    'object_manager' => $this->getObjectManager(),
-                    'target_class'   => ServicePoint::class,
-                    'api'            => [
-                        'url'     => 'orderadmin\\delivery-services\\api.rest.doctrine.service-points',
-                        'format'  => [
-                            'value' => 'item.id',
-                            'js'    => '{{extId}}, {{name}}',
-                            'php'   => '{{extId}}, {{name}}',
-                        ],
-                        'queryBy' => [
-                            'filter' => [
-                                [
-                                    'type' => 'orx',
-                                    'conditions' => [
-                                        ['field' => 'name', 'type' => 'ilike', 'value' => '%{{ value }}%'],
-                                        ['field' => 'extId', 'type' => 'eq', 'value' => '{{ value }}'],
-                                    ],
-                                    'where' => 'or',
-                                ],
-                                ['field' => 'deliveryService', 'type' => 'eq', 'value' => "{$this->getDeliveryService()->getId()}"],
-                            ],
-                        ],
-                    ],
-                    'sub_group'      => 'settings',
+                'name' => 'servicePoint',
+                'type' => Text::class,
+                'options' => [
+                    'label' => 'Pickup point',
+                    'required' => true,
                 ],
-                'attributes' => [
-                    'class' => 'form-control',
-                ],
-            ],
+            ]
         ];
     }
 
