@@ -74,7 +74,7 @@ class ServicePoints extends Integration implements
         $request->setPage($this->getCurrentPageNumber());
         $res = $sameday->getOohLocations($request);
         $oohLocations = json_decode($res->getRawResponse()->getBody(), true)['data'];
-        if (!empty($oohLocations)) {
+        if (! empty($oohLocations)) {
             foreach ($oohLocations as $oohLocation) {
                 $servicePoints[] = $oohLocation;
             }
@@ -94,17 +94,17 @@ class ServicePoints extends Integration implements
                 $this->countries[$servicePointData['country']]
                     = $this->getObjectManager()->getRepository(Country::class)
                     ->find($this->countries[$servicePointData['country']]);
-                if (empty($this->countries[$servicePointData['country']])) {
-                    $this->getLogger()->warn(
-                        sprintf(
-                            'Country (code %s) not found, service point %s will be skipped',
-                            $servicePointData['country'],
-                            $servicePointData['extId']
-                        )
-                    );
+            if (empty($this->countries[$servicePointData['country']])) {
+                $this->getLogger()->warn(
+                    sprintf(
+                        'Country (code %s) not found, service point %s will be skipped',
+                        $servicePointData['country'],
+                        $servicePointData['extId']
+                    )
+                );
 
-                    continue;
-                }
+                continue;
+            }
 
             $servicePointData['country']
                 = $this->countries[$servicePointData['country']];

@@ -96,7 +96,11 @@ class Calculation extends Integration implements CalculationProviderInterface
             new AwbRecipientEntityObject(
                 $recipient['cityString'],
                 $recipient['countyString'],
-                null, null, null, null, null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 $recipient['postalCode']
             ),
             0
@@ -107,7 +111,8 @@ class Calculation extends Integration implements CalculationProviderInterface
         return $this->processRates($rates, $services);
     }
 
-    private function getRecipientDetails(DeliveryRequest $deliveryRequest): array {
+    private function getRecipientDetails(DeliveryRequest $deliveryRequest): array
+    {
         return [
             'postalCode' => $deliveryRequest->getRecipientLocality()?->getPostcode(),
             'cityString' => $deliveryRequest->getRecipientLocality()?->getName(),
@@ -115,7 +120,8 @@ class Calculation extends Integration implements CalculationProviderInterface
         ];
     }
 
-    private function getSenderDetails(DeliveryRequest $deliveryRequest): array {
+    private function getSenderDetails(DeliveryRequest $deliveryRequest): array
+    {
         return [
             'postalCode' => $deliveryRequest->getSenderAddress()?->getPostcode(),
             'cityString' => $deliveryRequest->getSenderAddress()?->getLocality()?->getName(),
@@ -123,7 +129,8 @@ class Calculation extends Integration implements CalculationProviderInterface
         ];
     }
 
-    private function getAvailableRates(): array {
+    private function getAvailableRates(): array
+    {
         $rates = $this->getObjectManager()->getRepository(Rate::class)->findBy([
             'deliveryService' => $this->getDeliveryService(),
             'state' => Rate::STATE_ACTIVE,
@@ -132,7 +139,8 @@ class Calculation extends Integration implements CalculationProviderInterface
         return $rates;
     }
 
-    private function getServiceEstimations(Sameday $sameday, SamedayPostAwbEstimationRequest $request, array $rates, array $sender): array {
+    private function getServiceEstimations(Sameday $sameday, SamedayPostAwbEstimationRequest $request, array $rates, array $sender): array
+    {
         $services = [];
 
         foreach ($rates as $rate) {
@@ -141,7 +149,10 @@ class Calculation extends Integration implements CalculationProviderInterface
             $request->setThirdPartyPickup(new ThirdPartyPickupEntityObject(
                 $sender['cityString'],
                 $sender['countyString'],
-                null, null, null, null,
+                null,
+                null,
+                null,
+                null,
                 $sender['postalCode']
             ));
 
@@ -158,13 +169,14 @@ class Calculation extends Integration implements CalculationProviderInterface
         return $services;
     }
 
-    private function handleErrors(SamedayBadRequestException $e): array {
+    private function handleErrors(SamedayBadRequestException $e): array
+    {
         $errors = [];
-        if (!empty($e->getErrors())) {
+        if (! empty($e->getErrors())) {
             foreach ($e->getErrors() as $error) {
                 $errors[] = json_encode($error['errors']);
             }
-        } elseif (!empty($e->getRawResponse()->getBody())) {
+        } elseif (! empty($e->getRawResponse()->getBody())) {
             $body = json_decode($e->getRawResponse()->getBody(), true);
             $errors = $body['errors'] ?? [];
         }
@@ -178,11 +190,12 @@ class Calculation extends Integration implements CalculationProviderInterface
         return ['error' => $errors];
     }
 
-    private function processRates(array $rates, array $services): array {
+    private function processRates(array $rates, array $services): array
+    {
         $return = [];
         foreach ($rates as $rate) {
             $service = $services[$rate->getExtId()] ?? null;
-            if (!empty($service)) {
+            if (! empty($service)) {
                 $return[] = $this->parseApiResult($rate, $service);
             }
         }

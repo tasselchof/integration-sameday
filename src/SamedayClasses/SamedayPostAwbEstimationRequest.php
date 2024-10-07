@@ -97,7 +97,7 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
         $pickupPointId,
         PackageType $packageType,
         array $parcelsDimensions,
-//        AwbPaymentType $awbPayment,
+        //        AwbPaymentType $awbPayment,
         AwbRecipientEntityObject $awbRecipient,
         $insuredValue,
         $serviceId = null,
@@ -149,7 +149,7 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
         if ($this->thirdPartyPickup !== null) {
             $body = array_merge($body, ['thirdParty' => $this->thirdPartyPickup->getFields()]);
         }
-        
+
         $body = array_merge($body, [
             'serviceTaxes' => $this->serviceTaxIds,
             'awbRecipient' => $this->awbRecipient->getFields(),
