@@ -19,21 +19,22 @@ use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
 use Orderadmin\Application\Traits\ConfigManagerAwareTrait;
 use Orderadmin\Application\Traits\ObjectManagerAwareTrait;
 use Orderadmin\DeliveryServices\Entity\DeliveryRequest;
-use Orderadmin\DeliveryServices\Entity\ServicePoint;
 use Orderadmin\DeliveryServices\Exception\DeliveryServiceException;
 use Orderadmin\DeliveryServices\Model\DeliveryRequestManagerAwareInterface;
+use Orderadmin\DeliveryServices\Model\DeliveryServiceInterface;
 use Orderadmin\DeliveryServices\Model\Integration\IntegrationSettingsInterface;
+use Orderadmin\DeliveryServices\Service\DeliveryServices\AbstractDeliveryService;
 use Orderadmin\DeliveryServices\Traits\DeliveryRequestManagerAwareTrait;
 use Orderadmin\DeliveryServices\Traits\DeliveryServiceV2Trait;
 
-class Integration implements
+class Integration extends AbstractDeliveryService implements
+    DeliveryServiceInterface,
     ObjectManagerAwareInterface,
     ConfigManagerAwareInterface,
     IntegrationSettingsInterface,
     DeliveryRequestManagerAwareInterface
 {
-    use DeliveryServiceV2Trait,
-        ConfigManagerAwareTrait,
+    use ConfigManagerAwareTrait,
         ObjectManagerAwareTrait,
         DeliveryRequestManagerAwareTrait;
 
