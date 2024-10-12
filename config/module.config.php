@@ -2,8 +2,8 @@
 
 use Octava\Integrations\Sameday\Controller\AppController;
 use Octava\Integrations\Sameday\Service\Calculation;
-use Octava\Integrations\Sameday\Service\DeliveryServices\Labels;
-use Octava\Integrations\Sameday\Service\DeliveryServices\Shipment;
+use Octava\Integrations\Sameday\Service\Labels;
+use Octava\Integrations\Sameday\Service\Shipment;
 use Octava\Integrations\Sameday\Service\Integration;
 use Orderadmin\DeliveryServices\Entity\Rate;
 use Orderadmin\DeliveryServices\Entity\ServicePoint;
@@ -15,7 +15,7 @@ return [
             'name'        => 'Sameday',
             'integration' => Integration::class,
             'services'    => [
-                'shipmentV2' => Shipment::class,
+                'shipment' => Shipment::class,
                 'labels' => Labels::class,
                 'loader'            => [
                     Rate::class    => \Octava\Integrations\Sameday\Service\Loader\Services::class,
