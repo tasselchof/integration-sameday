@@ -20,8 +20,7 @@ class Labels extends Integration implements
 {
     public function getLabels(
         DeliveryRequest $deliveryRequest
-    ): string
-    {
+    ): string {
         if (empty($deliveryRequest->getTrackingNumber())) {
             throw new DeliveryServiceException(
                 $this->getTranslator()->translate(
@@ -67,7 +66,6 @@ class Labels extends Integration implements
         );
 
         if (1 || ! file_exists($fileName)) {
-
             $samedayClient = new SamedayClient($settings['username'], $settings['password']);
             $sameday = new Sameday($samedayClient);
             $data = new SamedayGetAwbPdfRequest(

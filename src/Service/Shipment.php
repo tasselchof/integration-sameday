@@ -119,15 +119,15 @@ class Shipment extends Integration implements
         if (empty($deliveryRequest->getRecipientPhone()?->getPhone())) {
             throw new DeliveryServiceException(
                 $this->getTranslator()->translate(
-                        'Recipient phone is not set'
+                    'Recipient phone is not set'
                 )
             );
         }
 
         $email = null;
-        if(!empty($deliveryRequest->getServicePoint())){
+        if (! empty($deliveryRequest->getServicePoint())) {
             $servicePoint = $deliveryRequest->getServicePoint()->getExtId();
-            if(!empty($deliveryRequest->getRecipient()->getEmail())){
+            if (! empty($deliveryRequest->getRecipient()->getEmail())) {
                 $email = $deliveryRequest->getRecipient()->getEmail();
             } else {
                 throw new DeliveryServiceException(
@@ -139,12 +139,13 @@ class Shipment extends Integration implements
         }
 
         $parcels = [];
-        foreach ($places as $place){
+        foreach ($places as $place) {
             $parcels[] = new ParcelDimensionsObject(
-                $place->getWeight()/100,
-                $place->getDimensions()['x']/10,
-                $place->getDimensions()['y']/10,
-                $place->getDimensions()['z']/10);
+                $place->getWeight() / 100,
+                $place->getDimensions()['x'] / 10,
+                $place->getDimensions()['y'] / 10,
+                $place->getDimensions()['z'] / 10
+            );
         }
 
         $recipient = $this->getRecipientDetails($deliveryRequest);
@@ -169,7 +170,7 @@ class Shipment extends Integration implements
             $deliveryRequest->getPayment()
         );
 
-        if(!empty($servicePoint)){
+        if (! empty($servicePoint)) {
             $data->setLockerLastMile($servicePoint);
         }
 
@@ -183,30 +184,30 @@ class Shipment extends Integration implements
 
         $res = json_decode($res->getRawResponse()->getBody(), true);
 
-            if (! empty($res['awbNumber'])) {
-                $trackingNumber = $res['awbNumber'];
+        if (! empty($res['awbNumber'])) {
+            $trackingNumber = $res['awbNumber'];
 
-                $this->getDeliveryRequestManager()->saveDeliveryRequest(
-                    [
-                        'trackingNumber' => $trackingNumber,
-                        'extId' => $trackingNumber
-                    ],
-                    $deliveryRequest
-                );
-            } else {
-                $deliveryRequest->setState(DeliveryRequest::STATE_ERROR);
-                $errors = $res['errors'] ?? [];
+            $this->getDeliveryRequestManager()->saveDeliveryRequest(
+                [
+                    'trackingNumber' => $trackingNumber,
+                    'extId' => $trackingNumber
+                ],
+                $deliveryRequest
+            );
+        } else {
+            $deliveryRequest->setState(DeliveryRequest::STATE_ERROR);
+            $errors = $res['errors'] ?? [];
 
-                $this->getLogger()->debug(json_encode($errors, true));
-                $errors[$deliveryRequest->getId()]['message']
-                    = json_encode($errors, true);
+            $this->getLogger()->debug(json_encode($errors, true));
+            $errors[$deliveryRequest->getId()]['message']
+                = json_encode($errors, true);
 
-                $this->getObjectManager()->flush();
+            $this->getObjectManager()->flush();
 
-                throw new DeliveryRequestException(
-                    json_encode($errors, true)
-                );
-            }
+            throw new DeliveryRequestException(
+                json_encode($errors, true)
+            );
+        }
 
         $this->getObjectManager()->flush([$deliveryRequest, $task]);
 
@@ -220,9 +221,10 @@ class Shipment extends Integration implements
         }
     }
 
-    private function getRecipientDetails(DeliveryRequest $deliveryRequest): array {
+    private function getRecipientDetails(DeliveryRequest $deliveryRequest): array
+    {
         $address = $deliveryRequest->getRecipientAddress()->getNotFormal();
-        if(empty($address)){
+        if (empty($address)) {
             $address = $deliveryRequest->getRecipientLocality() . ' ' .
                 $deliveryRequest->getRecipientAddress()?->getStreet() . ' ' .
                 $deliveryRequest->getRecipientAddress()?->getHouse();
