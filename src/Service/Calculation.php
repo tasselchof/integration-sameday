@@ -155,7 +155,6 @@ class Calculation extends Integration implements CalculationProviderInterface
         foreach ($rates as $rate) {
             $serviceId = $rate->getExtId();
             $request->setServiceId($serviceId);
-            $request->setThirdPartyPickup();
             if (in_array($rate->getExtId(), $this->thirdPartyPickupRates)) {
                 $request->setThirdPartyPickup(new ThirdPartyPickupEntityObject(
                     $sender['cityString'],
