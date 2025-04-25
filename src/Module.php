@@ -1,13 +1,13 @@
 <?php
 
-namespace Octava\Integrations\Sameday;
+namespace Octava\Integration\Sameday;
 
 use Laminas\ModuleManager\Feature\ServiceProviderInterface;
-use Octava\Integrations\Sameday\Service\Calculation;
-use Octava\Integrations\Sameday\Service\Labels;
-use Octava\Integrations\Sameday\Service\Loader\ServicePoints;
-use Octava\Integrations\Sameday\Service\Loader\Services;
-use Octava\Integrations\Sameday\Service\Shipment;
+use Octava\Integration\Sameday\Service\Calculation;
+use Octava\Integration\Sameday\Service\Labels;
+use Octava\Integration\Sameday\Service\Loader\ServicePoints;
+use Octava\Integration\Sameday\Service\Loader\Services;
+use Octava\Integration\Sameday\Service\Shipment;
 use Orderadmin\DeliveryServices\Factory\DeliveryServiceV2Factory;
 
 class Module implements ServiceProviderInterface

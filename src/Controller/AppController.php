@@ -1,6 +1,6 @@
 <?php
 
-namespace Octava\Integrations\Sameday\Controller;
+namespace Octava\Integration\Sameday\Controller;
 
 use Orderadmin\Application\Model\LoggerAwareInterface;
 use Orderadmin\Application\Model\Manager\ConfigManagerAwareInterface;

@@ -6,7 +6,7 @@
  * Time: 2:37
  */
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
 use Laminas\Form\Element\Text;
 use Laminas\Http\Client;

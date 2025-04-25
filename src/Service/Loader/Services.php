@@ -6,10 +6,10 @@
  * Time: 10:13 AM
  */
 
-namespace Octava\Integrations\Sameday\Service\Loader;
+namespace Octava\Integration\Sameday\Service\Loader;
 
-use Octava\Integrations\Sameday\Service\Integration;
-use Octava\Integrations\Sameday\Service\SamedayClient;
+use Octava\Integration\Sameday\Service\Integration;
+use Octava\Integration\Sameday\Service\SamedayClient;
 use Orderadmin\Application\Model\LoggerAwareInterface;
 use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
 use Orderadmin\Application\Traits\LoggerAwareTrait;

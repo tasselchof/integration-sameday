@@ -6,10 +6,10 @@
  * Time: 15:30
  */
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
-use Octava\Integrations\Sameday\SamedayClasses\AwbRecipientEntityObject;
-use Octava\Integrations\Sameday\SamedayClasses\SamedayPostAwbEstimationRequest;
+use Octava\Integration\Sameday\SamedayClasses\AwbRecipientEntityObject;
+use Octava\Integration\Sameday\SamedayClasses\SamedayPostAwbEstimationRequest;
 use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
 use Orderadmin\Application\Service\Boxing;
 use Orderadmin\Application\Traits\ObjectManagerAwareTrait;

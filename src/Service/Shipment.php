@@ -6,11 +6,11 @@
  * Time: 12:03
  */
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
-use Octava\Integrations\Sameday\SamedayClasses\AwbRecipientEntityObject;
-use Octava\Integrations\Sameday\SamedayClasses\SamedayPostAwbRequest;
-use Octava\Integrations\Sameday\Service\Integration;
+use Octava\Integration\Sameday\SamedayClasses\AwbRecipientEntityObject;
+use Octava\Integration\Sameday\SamedayClasses\SamedayPostAwbRequest;
+use Octava\Integration\Sameday\Service\Integration;
 use Orderadmin\Application\Model\LoggerAwareInterface;
 use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
 use Orderadmin\Application\Model\Manager\OrderadminManagerAwareInterface;
@@ -28,8 +28,8 @@ use Orderadmin\DeliveryServices\Exception\DeliveryRequestException;
 use Orderadmin\DeliveryServices\Exception\DeliveryServiceException;
 use Orderadmin\DeliveryServices\Model\Feature\ShipmentProviderInterface;
 use Orderadmin\Integrations\Entity\AbstractSource;
-use Octava\Integrations\Sameday\Traits\ConverterTrait;
-use Octava\Integrations\Sameday\Traits\DeliveryServicesTrait;
+use Octava\Integration\Sameday\Traits\ConverterTrait;
+use Octava\Integration\Sameday\Traits\DeliveryServicesTrait;
 use Sameday\Exceptions\SamedayAuthenticationException;
 use Sameday\Exceptions\SamedayAuthorizationException;
 use Sameday\Exceptions\SamedayBadRequestException;

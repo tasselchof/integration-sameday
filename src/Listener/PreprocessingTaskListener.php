@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Octava\Integrations\Sameday\Listener;
+namespace Octava\Integration\Sameday\Listener;
 
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\EventManagerInterface;

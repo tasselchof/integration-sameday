@@ -6,9 +6,9 @@
  * Time: 10:13 AM
  */
 
-namespace Octava\Integrations\Sameday\Service\Loader;
+namespace Octava\Integration\Sameday\Service\Loader;
 
-use Octava\Integrations\Sameday\Service\SamedayClient;
+use Octava\Integration\Sameday\Service\SamedayClient;
 use Orderadmin\Application\Model\LoggerAwareInterface;
 use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
 use Orderadmin\Application\Model\Manager\OrderadminManagerAwareInterface;
@@ -17,8 +17,8 @@ use Orderadmin\Application\Traits\LoggerAwareTrait;
 use Orderadmin\Application\Traits\ObjectManagerAwareTrait;
 use Orderadmin\Application\Traits\OrderadminManagerAwareTrait;
 use Orderadmin\DeliveryServices\Model\Feature\V2\PaginatorProviderInterface;
-use Octava\Integrations\Sameday\Service\Convert;
-use Octava\Integrations\Sameday\Service\Integration;
+use Octava\Integration\Sameday\Service\Convert;
+use Octava\Integration\Sameday\Service\Integration;
 use Orderadmin\DeliveryServices\Entity\Postcode;
 use Orderadmin\DeliveryServices\Model\Feature\V2\Loader\ServicePointsProviderInterface;
 use Orderadmin\DeliveryServices\Traits\DeliveryServiceV2Trait;

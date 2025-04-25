@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Octava\Integrations\Sameday\Factory\Listener;
+namespace Octava\Integration\Sameday\Factory\Listener;
 
 use Doctrine\ORM\EntityManager;
 use Orderadmin\Accounts\Service\AccountsService;
 use Orderadmin\Application\Model\Manager\ServiceManagerAwareInterface;
 use Orderadmin\DeliveryServices\Service\DeliveryServices;
 use Orderadmin\DeliveryServices\Service\DeliveryServicesRequestsService;
-use Octava\Integrations\Sameday\Listener\PreprocessingTaskListener;
+use Octava\Integration\Sameday\Listener\PreprocessingTaskListener;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 

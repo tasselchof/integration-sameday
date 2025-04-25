@@ -1,6 +1,6 @@
 <?php
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
 use DateTime;
 use Exception;

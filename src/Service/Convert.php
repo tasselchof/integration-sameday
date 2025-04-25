@@ -6,7 +6,7 @@
  * Time: 19:32
  */
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
 use Orderadmin\DeliveryServices\Entity\DeliveryService;
 use Orderadmin\DeliveryServices\Entity\ServicePoint;
@@ -14,7 +14,7 @@ use Orderadmin\Integrations\Entity\AbstractSource;
 use Orderadmin\Integrations\Entity\Products\ExpectedOffer;
 use Orderadmin\Integrations\Entity\Source;
 use Orderadmin\Integrations\Service\AbstractConverter;
-use Octava\Integrations\Sameday\Exception\SamedayException;
+use Octava\Integration\Sameday\Exception\SamedayException;
 use Orderadmin\Products\Entity\Order\OrderProduct;
 use Orderadmin\Products\Entity\AbstractOrder;
 use Orderadmin\Products\Entity\Product\Offer;

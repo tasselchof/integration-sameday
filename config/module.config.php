@@ -1,10 +1,10 @@
 <?php
 
-use Octava\Integrations\Sameday\Controller\AppController;
-use Octava\Integrations\Sameday\Service\Calculation;
-use Octava\Integrations\Sameday\Service\Labels;
-use Octava\Integrations\Sameday\Service\Shipment;
-use Octava\Integrations\Sameday\Service\Integration;
+use Octava\Integration\Sameday\Controller\AppController;
+use Octava\Integration\Sameday\Service\Calculation;
+use Octava\Integration\Sameday\Service\Labels;
+use Octava\Integration\Sameday\Service\Shipment;
+use Octava\Integration\Sameday\Service\Integration;
 use Orderadmin\DeliveryServices\Entity\Rate;
 use Orderadmin\DeliveryServices\Entity\ServicePoint;
 use Orderadmin\Integrations\Module;
@@ -18,8 +18,8 @@ return [
                 'shipment' => Shipment::class,
                 'labels' => Labels::class,
                 'loader'            => [
-                    Rate::class    => \Octava\Integrations\Sameday\Service\Loader\Services::class,
-                    ServicePoint::class => \Octava\Integrations\Sameday\Service\Loader\ServicePoints::class,
+                    Rate::class    => \Octava\Integration\Sameday\Service\Loader\Services::class,
+                    ServicePoint::class => \Octava\Integration\Sameday\Service\Loader\ServicePoints::class,
                 ],
                 'calculationV2' => Calculation::class,
             ],
@@ -31,7 +31,7 @@ return [
                 'name' => sprintf(
                     '%s-%s',
                     Module::MODULE_ID,
-                    \Octava\Integrations\Sameday\Module::DELIVERY_SERVICE
+                    \Octava\Integration\Sameday\Module::DELIVERY_SERVICE
                 ),
             ],
         ],
@@ -79,7 +79,7 @@ return [
         ],
     ],
     'eav_attributes'                => [
-        \Octava\Integrations\Sameday\Module::DELIVERY_SERVICE => [
+        \Octava\Integration\Sameday\Module::DELIVERY_SERVICE => [
 
         ]
     ],

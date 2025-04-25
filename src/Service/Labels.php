@@ -6,7 +6,7 @@
  * Time: 2:37
  */
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
 use Orderadmin\DeliveryServices\Entity\DeliveryRequest;
 use Orderadmin\DeliveryServices\Exception\DeliveryServiceException;
@@ -34,7 +34,7 @@ class Labels extends Integration implements
 
         $path = $this->getConfig()['orderadmin']['data_path']
             . '/DeliveryServices/'
-            . \Octava\Integrations\Sameday\Module::DELIVERY_SERVICE
+            . \Octava\Integration\Sameday\Module::DELIVERY_SERVICE
             . '/Documents';
 
         if (! file_exists($path)) {

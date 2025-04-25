@@ -1,6 +1,6 @@
 <?php
 
-namespace Octava\Integrations\Sameday\Exception;
+namespace Octava\Integration\Sameday\Exception;
 
 use Orderadmin\DeliveryServices\Exception\DeliveryServiceException;
 
