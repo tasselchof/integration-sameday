@@ -22,7 +22,7 @@ fi
 DIR=`pwd -P`
 VERSION=$1
 
-cd "$DIR" && git checkout master && git pull
+cd "$DIR" && git checkout main && git pull
 
 cd "$DIR" && composer cs-fix
 cd "$DIR" && composer update --lock --no-install
