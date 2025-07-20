@@ -185,7 +185,6 @@ class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInter
 
                 return $result;
             } else {
-                var_dump($responseData);die();
                 $errors = $responseData['errors'] ?? [];
 
                 $this->logger->debug('Sameday API error: ' . json_encode($errors));
