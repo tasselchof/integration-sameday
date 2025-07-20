@@ -1,25 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tasselchof
- * Date: 05.11.15
- * Time: 19:32
- */
+
+declare(strict_types=1);
 
 namespace Octava\Integrations\Sameday\Service;
 
+use Octava\Integrations\Sameday\Exception\SamedayException;
 use Orderadmin\DeliveryServices\Entity\DeliveryService;
 use Orderadmin\DeliveryServices\Entity\ServicePoint;
 use Orderadmin\Integrations\Entity\AbstractSource;
 use Orderadmin\Integrations\Entity\Products\ExpectedOffer;
 use Orderadmin\Integrations\Entity\Source;
 use Orderadmin\Integrations\Service\AbstractConverter;
-use Octava\Integrations\Sameday\Exception\SamedayException;
-use Orderadmin\Products\Entity\Order\OrderProduct;
 use Orderadmin\Products\Entity\AbstractOrder;
+use Orderadmin\Products\Entity\Order\OrderProduct;
 use Orderadmin\Products\Entity\Product\Offer;
 use Orderadmin\Products\Entity\Shop;
 use Users\Entity\User;
+
+use function array_flip;
+use function join;
+use function json_encode;
+use function sprintf;
+use function trim;
 
 class Convert extends AbstractConverter
 {
@@ -88,21 +90,20 @@ class Convert extends AbstractConverter
     public static function officeToServicePoint(
         array $officeData
     ): array {
-
         return [
             'extId'          => $officeData['oohId'],
             'country'        => $officeData['countryId'],
             'locality'       => [
-                'postcode' => $officeData['postalCode']
+                'postcode' => $officeData['postalCode'],
             ],
             'name'           => $officeData['name'],
             'raw'            => $officeData,
-            'type'           => ($officeData['oohType'] == 1)
+            'type'           => $officeData['oohType'] == 1
                 ? ServicePoint::TYPE_SERVICE_POINT
                 : ServicePoint::TYPE_SELF_SERVICE_POINT,
             'rawAddress'     => trim($officeData['city'] . ', ' . $officeData['address']),
             'rawDescription' => json_encode($officeData['schedule'], true),
-            'geo' => [
+            'geo'            => [
                 'latitude'  => $officeData['lat'],
                 'longitude' => $officeData['lng'],
             ],
@@ -131,7 +132,7 @@ class Convert extends AbstractConverter
             'raw'             => $offerData,
         ];
 
-        $expectedOfferData = [
+        return [
             'shop'   => $shop,
             'extId'  => $offerData['sku'],
             'source' => $source,
@@ -139,10 +140,8 @@ class Convert extends AbstractConverter
             'raw'    => [
                 'rawData'   => $offerData,
                 'offerData' => $oaOfferData,
-            ]
+            ],
         ];
-
-        return $expectedOfferData;
     }
 
     public static function orderToOrder(Source $source, Shop $shop, array $order): array
@@ -167,9 +166,10 @@ class Convert extends AbstractConverter
             'raw'           => $order,
         ];
 
-        if (! empty(
-            $source->getSettings()['Products']['options']['order-auto-confirm']
-        )
+        if (
+            ! empty(
+                $source->getSettings()['Products']['options']['order-auto-confirm']
+            )
         ) {
             $orderData['eav']['order-confirmed'] = true;
         }
@@ -191,8 +191,7 @@ class Convert extends AbstractConverter
             'name'  => $order['shipTo']['name'],
             'phone' => ! empty($order['shipTo']['phone'])
                 ? $order['shipTo']['phone'] : null,
-            'email' => isset($order['customerEmail'])
-                ? $order['customerEmail'] : null,
+            'email' => $order['customerEmail'] ?? null,
             'raw'   => $order['shipTo'],
         ];
 
@@ -207,24 +206,16 @@ class Convert extends AbstractConverter
 
     public static function orderToAddress(array $order): array
     {
-        $addressData = [
+        return [
             'postcode'  => isset($order['shipTo']['postalCode'])
                 ? trim($order['shipTo']['postalCode'])
                 : null,
             'locality'  => [
-                'name' => isset($order['shipTo']['city'])
-                    ? $order['shipTo']['city']
-                    : null,
+                'name' => $order['shipTo']['city'] ?? null,
             ],
-            'street'    => isset($order['shipTo']['street1'])
-                ? $order['shipTo']['street1']
-                : null,
-            'house'     => isset($order['shipTo']['street2'])
-                ? $order['shipTo']['street2']
-                : null,
-            'block'     => isset($order['shipTo']['street3'])
-                ? $order['shipTo']['street3']
-                : null,
+            'street'    => $order['shipTo']['street1'] ?? null,
+            'house'     => $order['shipTo']['street2'] ?? null,
+            'block'     => $order['shipTo']['street3'] ?? null,
             'extId'     => $order['orderId'],
             'notFormal' => join(
                 ', ',
@@ -237,9 +228,6 @@ class Convert extends AbstractConverter
                 ]
             ),
         ];
-
-
-        return $addressData;
     }
 
     public static function orderToOrderProducts(Shop $shop, array $order): array
@@ -267,7 +255,7 @@ class Convert extends AbstractConverter
                 'count'        => $item['quantity'],
                 'state'        => OrderProduct::STATE_ACTIVE,
                 'price'        => ! empty($item['unitPrice'])
-                    ? (int)$item['unitPrice']
+                    ? (int) $item['unitPrice']
                     : 0,
                 'total'        => $item['quantity']
                     * $item['unitPrice'],
@@ -282,7 +270,7 @@ class Convert extends AbstractConverter
         AbstractSource $source,
         array $storeData
     ): array {
-        $dictionaryShop = [
+        return [
             'name'   => $storeData['storeName'],
             'extId'  => $storeData['storeId'],
             'type'   => Source\Dictionary::TYPE_SHOP,
@@ -290,15 +278,13 @@ class Convert extends AbstractConverter
             'source' => $source,
             'raw'    => $storeData,
         ];
-
-        return $dictionaryShop;
     }
 
     public static function dictionaryWarehousesToWarehouses(
         AbstractSource $source,
         array $warehouseData
     ): array {
-        $dictionaryWarehouse = [
+        return [
             'name'   => $warehouseData['warehouseName'],
             'extId'  => $warehouseData['warehouseId'],
             'type'   => Source\Dictionary::TYPE_WAREHOUSE,
@@ -306,15 +292,13 @@ class Convert extends AbstractConverter
             'source' => $source,
             'raw'    => $warehouseData,
         ];
-
-        return $dictionaryWarehouse;
     }
 
     public static function dictionaryStatusToOrderStates(
         AbstractSource $source,
         array $orderStatusData
     ): array {
-        $dictionaryState = [
+        return [
             'name'   => $orderStatusData['name'],
             'extId'  => $orderStatusData['code'],
             'type'   => Source\Dictionary::TYPE_ORDER_STATE,
@@ -322,8 +306,6 @@ class Convert extends AbstractConverter
             'source' => $source,
             'raw'    => $orderStatusData,
         ];
-
-        return $dictionaryState;
     }
 
     public function convertDeliveryServiceExtId(
@@ -343,9 +325,10 @@ class Convert extends AbstractConverter
         string $extId,
         bool $reverse = false
     ): ?string {
-        if (! empty(
-            $this->deliveryServicesRatesMatrix[$deliveryService->getExtId()]
-        )
+        if (
+            ! empty(
+                $this->deliveryServicesRatesMatrix[$deliveryService->getExtId()]
+            )
         ) {
             $a = $this->deliveryServicesRatesMatrix[$deliveryService->getExtId(
             )];

@@ -1,19 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tasselchof
- * Date: 16.12.15
- * Time: 2:37
- */
 
-namespace Octava\Integrations\Sameday\Service;
+declare(strict_types=1);
+
+namespace Octava\Integration\Sameday\Service;
 
 use Laminas\Form\Element\Text;
 use Laminas\Http\Client;
 use Laminas\Http\Headers;
 use Laminas\Http\Request;
 use Laminas\Log\Logger;
-use Orderadmin\Application\Form\Element\Select2;
 use Orderadmin\Application\Model\Manager\ConfigManagerAwareInterface;
 use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
 use Orderadmin\Application\Traits\ConfigManagerAwareTrait;
@@ -25,7 +20,14 @@ use Orderadmin\DeliveryServices\Model\DeliveryServiceInterface;
 use Orderadmin\DeliveryServices\Model\Integration\IntegrationSettingsInterface;
 use Orderadmin\DeliveryServices\Service\DeliveryServices\AbstractDeliveryService;
 use Orderadmin\DeliveryServices\Traits\DeliveryRequestManagerAwareTrait;
-use Orderadmin\DeliveryServices\Traits\DeliveryServiceV2Trait;
+
+use function http_build_query;
+use function implode;
+use function in_array;
+use function json_decode;
+use function json_encode;
+use function sprintf;
+use function var_export;
 
 class Integration extends AbstractDeliveryService implements
     DeliveryServiceInterface,
@@ -34,10 +36,9 @@ class Integration extends AbstractDeliveryService implements
     IntegrationSettingsInterface,
     DeliveryRequestManagerAwareInterface
 {
-    use ConfigManagerAwareTrait,
-        ObjectManagerAwareTrait,
-        DeliveryRequestManagerAwareTrait;
-
+    use ConfigManagerAwareTrait;
+    use DeliveryRequestManagerAwareTrait;
+    use ObjectManagerAwareTrait;
 
     const DELIVERY_SERVICE = 'sameday';
 
@@ -63,31 +64,31 @@ class Integration extends AbstractDeliveryService implements
     {
         return [
             [
-                'name' => 'username',
-                'type' => Text::class,
+                'name'    => 'username',
+                'type'    => Text::class,
                 'options' => [
-                    'label' => 'Username',
+                    'label'     => 'Username',
                     'sub_group' => 'auth',
-                    'required' => true,
+                    'required'  => true,
                 ],
             ],
             [
-                'name' => 'password',
-                'type' => Text::class,
+                'name'    => 'password',
+                'type'    => Text::class,
                 'options' => [
-                    'label' => 'Password',
+                    'label'     => 'Password',
                     'sub_group' => 'auth',
-                    'required' => true,
+                    'required'  => true,
                 ],
             ],
             [
-                'name' => 'servicePoint',
-                'type' => Text::class,
+                'name'    => 'servicePoint',
+                'type'    => Text::class,
                 'options' => [
-                    'label' => 'Pickup point',
+                    'label'    => 'Pickup point',
                     'required' => true,
                 ],
-            ]
+            ],
         ];
     }
 
@@ -112,7 +113,7 @@ class Integration extends AbstractDeliveryService implements
     ) {
         $allowedMethods = [
             Request::METHOD_GET,
-            Request::METHOD_POST
+            Request::METHOD_POST,
         ];
         if (! in_array($method, $allowedMethods, false)) {
             throw new \Exception(

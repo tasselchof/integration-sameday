@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Octava\Integrations\Sameday\Service;
 
 use DateTime;
@@ -21,56 +23,41 @@ use Sameday\Requests\SamedayAuthenticateRequest;
 use Sameday\Responses\SamedayAuthenticateResponse;
 use Sameday\SamedayClientInterface;
 
+use function http_build_query;
+use function in_array;
+
 /**
  * Class that handles HTTP request and response processing.
- *
- * @package Sameday
  */
 class SamedayClient implements SamedayClientInterface
 {
-    const VERSION = '2.2.0';
-    const API_HOST = 'https://api.sameday.bg';
-    const KEY_TOKEN = 'token';
+    const VERSION           = '2.2.0';
+    const API_HOST          = 'https://api.sameday.bg';
+    const KEY_TOKEN         = 'token';
     const KEY_TOKEN_EXPIRES = 'expires_at';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $username;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $password;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $host;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $platformName;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $platformVersion;
 
-    /**
-     * @var SamedayHttpClientInterface
-     */
+    /** @var SamedayHttpClientInterface */
     protected $httpClientHandler;
 
-    /**
-     * @var SamedayPersistentDataInterface
-     */
+    /** @var SamedayPersistentDataInterface */
     protected $persistentDataHandler;
 
     /**
-     * SamedayClient constructor.
-     *
      * @param string $username
      * @param string $password
      * @param string|null $host
@@ -78,7 +65,6 @@ class SamedayClient implements SamedayClientInterface
      * @param string|null $platformVersion
      * @param SamedayHttpClientInterface|string|null $httpClientHandler
      * @param SamedayPersistentDataInterface|string|null $persistentDataHandler
-     *
      * @throws SamedaySDKException
      */
     public function __construct(
@@ -90,21 +76,21 @@ class SamedayClient implements SamedayClientInterface
         $httpClientHandler = null,
         $persistentDataHandler = null
     ) {
-        $this->username = $username;
-        $this->password = $password;
-        $this->host = $host ?: self::API_HOST;
-        $this->platformName = $platformName;
-        $this->platformVersion = $platformVersion;
-        $this->httpClientHandler = HttpClientsFactory::createHttpClient($httpClientHandler);
+        $this->username              = $username;
+        $this->password              = $password;
+        $this->host                  = $host ?: self::API_HOST;
+        $this->platformName          = $platformName;
+        $this->platformVersion       = $platformVersion;
+        $this->httpClientHandler     = HttpClientsFactory::createHttpClient($httpClientHandler);
         $this->persistentDataHandler = PersistentDataFactory::createPersistentDataHandler($persistentDataHandler);
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function sendRequest(SamedayRequest $request)
     {
-        $headers = $request->getHeaders();
+        $headers               = $request->getHeaders();
         $headers['User-Agent'] = 'PHP-SDK/' . self::VERSION;
 
         if ($this->platformName !== null && $this->platformVersion !== null) {
@@ -177,7 +163,7 @@ class SamedayClient implements SamedayClientInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function login()
     {
@@ -191,7 +177,7 @@ class SamedayClient implements SamedayClientInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function logout()
     {
@@ -201,9 +187,7 @@ class SamedayClient implements SamedayClientInterface
 
     /**
      * @param bool $usePersistentData
-     *
      * @return string
-     *
      * @throws SamedaySDKException
      * @throws SamedayAuthenticationException
      * @throws Exception
@@ -211,7 +195,7 @@ class SamedayClient implements SamedayClientInterface
     protected function getToken($usePersistentData = true)
     {
         if ($usePersistentData) {
-            $token = $this->persistentDataHandler->get(self::KEY_TOKEN);
+            $token     = $this->persistentDataHandler->get(self::KEY_TOKEN);
             $expiresAt = $this->persistentDataHandler->get(self::KEY_TOKEN_EXPIRES);
 
             // Check if token is valid and not expired.
@@ -230,8 +214,8 @@ class SamedayClient implements SamedayClientInterface
 
         // No token found or expired, try to get new one.
         $authenticateRequest = new SamedayAuthenticateRequest($this->username, $this->password);
-        $rawResponse = $this->sendRequest($authenticateRequest->buildRequest());
-        $response = new SamedayAuthenticateResponse($authenticateRequest, $rawResponse);
+        $rawResponse         = $this->sendRequest($authenticateRequest->buildRequest());
+        $response            = new SamedayAuthenticateResponse($authenticateRequest, $rawResponse);
 
         if ($usePersistentData) {
             $this->persistentDataHandler->set(self::KEY_TOKEN, $response->getToken());

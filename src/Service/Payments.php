@@ -7,12 +7,11 @@ namespace Octava\Integration\Sameday\Service;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Dot\DependencyInjection\Attribute\Inject;
-use Orderadmin\DeliveryServices\Entity\DeliveryRequest;
-use Orderadmin\DeliveryServices\Model\Feature\Integration\LabelsProviderInterface;
+use Orderadmin\DeliveryServices\Service\Payment\PaymentProviderInterface;
 use Orderadmin\DeliveryServices\Traits\Feature\ConnectionAwareTrait;
 use Psr\Log\LoggerInterface;
 
-class Labels implements LabelsProviderInterface
+class Payments implements PaymentProviderInterface
 {
     use ConnectionAwareTrait;
 
@@ -28,14 +27,15 @@ class Labels implements LabelsProviderInterface
     ) {
     }
 
-    public function getLabels(DeliveryRequest $deliveryRequest, array $options = []): string
+    public function processPayment(array $data): array
     {
-        // Placeholder implementation for V2 pattern
-        // This would typically generate labels using the V2 pattern
-        $this->setCarrierIntegration($deliveryRequest->getIntegration());
-        $settings = $this->source->getSettings();
-
-        // Return a placeholder base64 encoded PDF
-        return 'data:application/pdf;base64,JVBERi0xLjQKJcOkw7zDtsO...';
+        // Implementation for processing payments
+        // This would handle payment processing for Sameday shipments
+        return [
+            'success'        => true,
+            'transaction_id' => $data['transaction_id'] ?? null,
+            'amount'         => $data['amount'] ?? 0,
+            'currency'       => $data['currency'] ?? 'RON',
+        ];
     }
 }

@@ -1,35 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mtodo
- * Date: 29.10.19
- * Time: 12:03
- */
 
-namespace Octava\Integrations\Sameday\Service;
+declare(strict_types=1);
 
-use Octava\Integrations\Sameday\SamedayClasses\AwbRecipientEntityObject;
-use Octava\Integrations\Sameday\SamedayClasses\SamedayPostAwbRequest;
-use Octava\Integrations\Sameday\Service\Integration;
-use Orderadmin\Application\Model\LoggerAwareInterface;
-use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
-use Orderadmin\Application\Model\Manager\OrderadminManagerAwareInterface;
-use Orderadmin\Application\Model\Manager\ServiceManagerAwareInterface;
-use Orderadmin\Application\Traits\LoggerAwareTrait;
-use Orderadmin\Application\Traits\ObjectManagerAwareTrait;
-use Orderadmin\Application\Traits\OrderadminManagerAwareTrait;
-use Orderadmin\Application\Traits\ServiceManagerAwareTrait;
-use Orderadmin\Clients\Entity\Address;
-use Orderadmin\Clients\Entity\Profile;
+namespace Octava\Integration\Sameday\Service;
+
+use Octava\Integration\Sameday\SamedayClasses\AwbRecipientEntityObject;
+use Octava\Integration\Sameday\SamedayClasses\SamedayPostAwbRequest;
+use Octava\Integration\Sameday\Service\Integration;
 use Orderadmin\DeliveryServices\Entity\DeliveryRequest;
 use Orderadmin\DeliveryServices\Entity\Processing\Task;
-use Orderadmin\DeliveryServices\Entity\ServicePoint;
 use Orderadmin\DeliveryServices\Exception\DeliveryRequestException;
 use Orderadmin\DeliveryServices\Exception\DeliveryServiceException;
 use Orderadmin\DeliveryServices\Model\Feature\ShipmentProviderInterface;
 use Orderadmin\Integrations\Entity\AbstractSource;
-use Octava\Integrations\Sameday\Traits\ConverterTrait;
-use Octava\Integrations\Sameday\Traits\DeliveryServicesTrait;
 use Sameday\Exceptions\SamedayAuthenticationException;
 use Sameday\Exceptions\SamedayAuthorizationException;
 use Sameday\Exceptions\SamedayBadRequestException;
@@ -42,11 +25,14 @@ use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Sameday;
 
+use function json_decode;
+use function json_encode;
+use function sprintf;
+
 class Shipment extends Integration implements
     ShipmentProviderInterface
 {
-
-    protected ? Task $task = null;
+    protected ?Task $task             = null;
     protected ?AbstractSource $source = null;
     protected ?string $trackingNumber = null;
 
@@ -69,7 +55,7 @@ class Shipment extends Integration implements
     public function createShipment(
         DeliveryRequest $deliveryRequest,
         array $calculation = [],
-        Task $task = null
+        ?Task $task = null
     ) {
         if (! empty($deliveryRequest->getTrackingNumber())) {
             throw new DeliveryServiceException(
@@ -179,8 +165,8 @@ class Shipment extends Integration implements
         $errors = [];
 
         $samedayClient = new SamedayClient($settings['username'], $settings['password']);
-        $sameday = new Sameday($samedayClient);
-        $res = $sameday->postAwb($data);
+        $sameday       = new Sameday($samedayClient);
+        $res           = $sameday->postAwb($data);
 
         $res = json_decode($res->getRawResponse()->getBody(), true);
 
@@ -190,7 +176,7 @@ class Shipment extends Integration implements
             $this->getDeliveryRequestManager()->saveDeliveryRequest(
                 [
                     'trackingNumber' => $trackingNumber,
-                    'extId' => $trackingNumber
+                    'extId'          => $trackingNumber,
                 ],
                 $deliveryRequest
             );
@@ -225,17 +211,17 @@ class Shipment extends Integration implements
     {
         $address = $deliveryRequest->getRecipientAddress()->getNotFormal();
         if (empty($address)) {
-            $address = $deliveryRequest->getRecipientLocality() . ' ' .
-                $deliveryRequest->getRecipientAddress()?->getStreet() . ' ' .
-                $deliveryRequest->getRecipientAddress()?->getHouse();
+            $address = $deliveryRequest->getRecipientLocality() . ' '
+                . $deliveryRequest->getRecipientAddress()?->getStreet() . ' '
+                . $deliveryRequest->getRecipientAddress()?->getHouse();
         }
         return [
-            'address' => $address,
-            'name'  => $deliveryRequest->getRecipientName(),
-            'phone' => $deliveryRequest->getRecipientPhone()?->getPhone(),
-            'postalCode' => $deliveryRequest->getRecipientLocality()?->getPostcode(),
-            'cityString' => $deliveryRequest->getRecipientLocality()?->getName(),
-            'countyString' => $deliveryRequest->getRecipientLocality()?->getArea()?->getName()
+            'address'      => $address,
+            'name'         => $deliveryRequest->getRecipientName(),
+            'phone'        => $deliveryRequest->getRecipientPhone()?->getPhone(),
+            'postalCode'   => $deliveryRequest->getRecipientLocality()?->getPostcode(),
+            'cityString'   => $deliveryRequest->getRecipientLocality()?->getName(),
+            'countyString' => $deliveryRequest->getRecipientLocality()?->getArea()?->getName(),
         ];
     }
 }

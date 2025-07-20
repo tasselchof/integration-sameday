@@ -1,18 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mtodo
- * Date: 31.07.19
- * Time: 15:30
- */
 
-namespace Octava\Integrations\Sameday\Service;
+declare(strict_types=1);
 
-use Octava\Integrations\Sameday\SamedayClasses\AwbRecipientEntityObject;
-use Octava\Integrations\Sameday\SamedayClasses\SamedayPostAwbEstimationRequest;
-use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
-use Orderadmin\Application\Service\Boxing;
-use Orderadmin\Application\Traits\ObjectManagerAwareTrait;
+namespace Octava\Integration\Sameday\Service;
+
+use Octava\Integration\Sameday\SamedayClasses\AwbRecipientEntityObject;
+use Octava\Integration\Sameday\SamedayClasses\SamedayPostAwbEstimationRequest;
 use Orderadmin\DeliveryServices\Entity\DeliveryRequest;
 use Orderadmin\DeliveryServices\Entity\Rate;
 use Orderadmin\DeliveryServices\Entity\ServicePoint;
@@ -32,14 +25,25 @@ use Sameday\Objects\Types\PackageType;
 use Sameday\Responses\SamedayPostAwbEstimationResponse;
 use Sameday\Sameday;
 
+use function array_merge;
+use function base64_encode;
+use function in_array;
+use function is_array;
+use function is_null;
+use function join;
+use function json_decode;
+use function json_encode;
+use function sprintf;
+use function trim;
+
 class Calculation extends Integration implements CalculationProviderInterface
 {
     use DeliveryServiceV2Trait;
 
     protected array $thirdPartyPickupRates = [
         '10',
-        '24'
-        ];
+        '24',
+    ];
 
     /**
      * @throws SamedayOtherException
@@ -59,7 +63,7 @@ class Calculation extends Integration implements CalculationProviderInterface
         float $z = 0,
         array $data = []
     ): array {
-        $settings = $this->getAppConfig();
+        $settings    = $this->getAppConfig();
         $integration = $this->getIntegration();
 
         if (empty($settings['username']) || empty($settings['password'])) {
@@ -74,13 +78,13 @@ class Calculation extends Integration implements CalculationProviderInterface
             ));
         }
 
-        $x /= 10;
-        $y /= 10;
-        $z /= 10;
+        $x      /= 10;
+        $y      /= 10;
+        $z      /= 10;
         $weight /= 100;
 
         $recipient = $this->getRecipientDetails($deliveryRequest);
-        $sender = $this->getSenderDetails($deliveryRequest);
+        $sender    = $this->getSenderDetails($deliveryRequest);
 
         if (empty($recipient['postalCode'])) {
             throw new DeliveryServiceException($this->getTranslator()->translate('Recipient postcode not found'));
@@ -91,7 +95,7 @@ class Calculation extends Integration implements CalculationProviderInterface
         $rates = $this->getAvailableRates();
 
         $samedayClient = new SamedayClient($settings['username'], $settings['password']);
-        $sameday = new Sameday($samedayClient);
+        $sameday       = new Sameday($samedayClient);
 
         $request = new SamedayPostAwbEstimationRequest(
             $settings['servicePoint'],
@@ -123,29 +127,27 @@ class Calculation extends Integration implements CalculationProviderInterface
     private function getRecipientDetails(DeliveryRequest $deliveryRequest): array
     {
         return [
-            'postalCode' => $deliveryRequest->getRecipientLocality()?->getPostcode(),
-            'cityString' => $deliveryRequest->getRecipientLocality()?->getName(),
-            'countyString' => $deliveryRequest->getRecipientLocality()?->getArea()?->getName()
+            'postalCode'   => $deliveryRequest->getRecipientLocality()?->getPostcode(),
+            'cityString'   => $deliveryRequest->getRecipientLocality()?->getName(),
+            'countyString' => $deliveryRequest->getRecipientLocality()?->getArea()?->getName(),
         ];
     }
 
     private function getSenderDetails(DeliveryRequest $deliveryRequest): array
     {
         return [
-            'postalCode' => $deliveryRequest->getSenderAddress()?->getPostcode(),
-            'cityString' => $deliveryRequest->getSenderAddress()?->getLocality()?->getName(),
-            'countyString' => $deliveryRequest->getSenderAddress()?->getLocality()?->getArea()?->getName()
+            'postalCode'   => $deliveryRequest->getSenderAddress()?->getPostcode(),
+            'cityString'   => $deliveryRequest->getSenderAddress()?->getLocality()?->getName(),
+            'countyString' => $deliveryRequest->getSenderAddress()?->getLocality()?->getArea()?->getName(),
         ];
     }
 
     private function getAvailableRates(): array
     {
-        $rates = $this->getObjectManager()->getRepository(Rate::class)->findBy([
+        return $this->getObjectManager()->getRepository(Rate::class)->findBy([
             'deliveryService' => $this->getDeliveryService(),
-            'state' => Rate::STATE_ACTIVE,
+            'state'           => Rate::STATE_ACTIVE,
         ]);
-
-        return $rates;
     }
 
     private function getServiceEstimations(Sameday $sameday, SamedayPostAwbEstimationRequest $request, array $rates, array $sender): array
@@ -188,7 +190,7 @@ class Calculation extends Integration implements CalculationProviderInterface
                 $errors[] = json_encode($error['errors']);
             }
         } elseif (! empty($e->getRawResponse()->getBody())) {
-            $body = json_decode($e->getRawResponse()->getBody(), true);
+            $body   = json_decode($e->getRawResponse()->getBody(), true);
             $errors = $body['errors'] ?? [];
         }
 
@@ -220,30 +222,30 @@ class Calculation extends Integration implements CalculationProviderInterface
     }
 
     public function parseApiResult(
-        Rate         $rate,
-        array        $service,
-        ServicePoint $servicePoint = null
+        Rate $rate,
+        array $service,
+        ?ServicePoint $servicePoint = null
     ): array {
         $integration = $this->getIntegration();
 
         $result = [
-            'id' => $rate->getId(),
-            'name' => $rate->getName(),
-            'integration' => [
-                'id' => $integration->getId(),
+            'id'              => $rate->getId(),
+            'name'            => $rate->getName(),
+            'integration'     => [
+                'id'   => $integration->getId(),
                 'name' => $integration->getName(),
             ],
-            'description' => $rate->getComment(),
-            'type' => $rate->getType(),
-            'currency' => [
-                'code' => $rate->getCurrency()->getCode(),
+            'description'     => $rate->getComment(),
+            'type'            => $rate->getType(),
+            'currency'        => [
+                'code'   => $rate->getCurrency()->getCode(),
                 'symbol' => $rate->getCurrency()->getSymbol(),
             ],
-            'deliveryTime' => [
+            'deliveryTime'    => [
                 'min' => null,
             ],
             'deliveryService' => [
-                'id' => $this->getDeliveryService()->getId(),
+                'id'   => $this->getDeliveryService()->getId(),
                 'name' => $this->getDeliveryService()->getName(),
             ],
         ];
@@ -253,22 +255,22 @@ class Calculation extends Integration implements CalculationProviderInterface
         } else {
             $result = array_merge($result, [
                 'deliveryPrice' => $service['amount'],
-                'deliveryTime' => [
+                'deliveryTime'  => [
                     'max' => new \DateTime(sprintf('today +%s hours', $service['time'])),
                 ],
-                'raw' => base64_encode(json_encode($service)),
+                'raw'           => base64_encode(json_encode($service)),
             ]);
         }
 
         if (! is_null($servicePoint)) {
             $result['service-point'] = [
-                'id' => $servicePoint->getId(),
-                'extId' => $servicePoint->getExtId(),
-                'name' => $servicePoint->getName(),
-                'geo' => ! empty($servicePoint->getGeo()) ? join(',', $servicePoint->getGeoArray()) : null,
-                'address' => $servicePoint->getRawAddress(),
-                'phone' => $servicePoint->getRawPhone(),
-                'timetable' => $servicePoint->getRawTimetable(),
+                'id'          => $servicePoint->getId(),
+                'extId'       => $servicePoint->getExtId(),
+                'name'        => $servicePoint->getName(),
+                'geo'         => ! empty($servicePoint->getGeo()) ? join(',', $servicePoint->getGeoArray()) : null,
+                'address'     => $servicePoint->getRawAddress(),
+                'phone'       => $servicePoint->getRawPhone(),
+                'timetable'   => $servicePoint->getRawTimetable(),
                 'description' => $servicePoint->getRawDescription(),
             ];
         }

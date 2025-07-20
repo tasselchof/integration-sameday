@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (! defined('APPLICATION')) {
     define('APPLICATION', 'orderadmin.ru');
 }

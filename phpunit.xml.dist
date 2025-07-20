@@ -18,7 +18,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="Sameday Module Tests">
+        <testsuite name="Speedy Module Tests">
             <directory>./test</directory>
         </testsuite>
     </testsuites>

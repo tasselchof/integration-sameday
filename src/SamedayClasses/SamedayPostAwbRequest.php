@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Octava\Integrations\Sameday\SamedayClasses;
 
 use Sameday\Http\RequestBodyUrlEncoded;
@@ -12,137 +14,89 @@ use Sameday\Objects\Types\DeliveryIntervalServiceType;
 use Sameday\Objects\Types\PackageType;
 use Sameday\Requests\SamedayRequestInterface;
 
+use function array_map;
+use function array_merge;
+use function count;
+
 /**
  * Request to create a new AWB.
- *
- * @package Sameday
  */
 class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest implements SamedayRequestInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $pickupPointId;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $contactPersonId;
 
-    /**
-     * @var PackageType
-     */
+    /** @var PackageType */
     protected $packageType;
 
-    /**
-     * @var ParcelDimensionsObject[]
-     */
+    /** @var ParcelDimensionsObject[] */
     protected $parcelsDimensions;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $serviceId;
 
-    /**
-     * @var AwbPaymentType
-     */
+    /** @var AwbPaymentType */
     protected $awbPayment;
 
-    /**
-     * @var AwbRecipientEntityObject
-     */
+    /** @var AwbRecipientEntityObject */
     protected $awbRecipient;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     protected $insuredValue;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     protected $cashOnDeliveryAmount;
 
-    /**
-     * @var CodCollectorType|null
-     */
+    /** @var CodCollectorType|null */
     protected $cashOnDeliveryCollector;
 
-    /**
-     * @var ThirdPartyPickupEntityObject|null
-     */
+    /** @var ThirdPartyPickupEntityObject|null */
     protected $thirdPartyPickup;
 
-    /**
-     * @var int[]
-     */
+    /** @var int[] */
     protected $serviceTaxIds;
 
-    /**
-     * @var DeliveryIntervalServiceType|null
-     */
+    /** @var DeliveryIntervalServiceType|null */
     protected $deliveryIntervalServiceType;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $reference;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $observation;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $priceObservation;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $clientObservation;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $lockerFirstMile;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $lockerLastMile;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $oohFirstMile;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $oohLastMile;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $currency;
 
     /**
      * @param $pickupPointId
      * @param $contactPersonId
-     * @param PackageType $packageType
      * @param array $parcelsDimensions
      * @param $serviceId
-     * @param AwbPaymentType $awbPayment
-     * @param AwbRecipientEntityObject $awbRecipient
      * @param $insuredValue
      * @param $cashOnDeliveryAmount
-     * @param CodCollectorType|null $cashOnDeliveryCollector
-     * @param ThirdPartyPickupEntityObject|null $thirdPartyPickup
      * @param array $serviceTaxIds
-     * @param DeliveryIntervalServiceType|null $deliveryIntervalServiceType
      * @param $reference
      * @param $observation
      * @param $priceObservation
@@ -163,10 +117,10 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
         $insuredValue,
         $cashOnDeliveryAmount = .0,
         $contactPersonId = null,
-        CodCollectorType $cashOnDeliveryCollector = null,
-        ThirdPartyPickupEntityObject $thirdPartyPickup = null,
+        ?CodCollectorType $cashOnDeliveryCollector = null,
+        ?ThirdPartyPickupEntityObject $thirdPartyPickup = null,
         array $serviceTaxIds = [],
-        DeliveryIntervalServiceType $deliveryIntervalServiceType = null,
+        ?DeliveryIntervalServiceType $deliveryIntervalServiceType = null,
         $reference = null,
         $observation = null,
         $priceObservation = null,
@@ -177,32 +131,32 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
         $oohLastMile = null,
         $currency = null
     ) {
-        $this->pickupPointId = $pickupPointId;
-        $this->contactPersonId = $contactPersonId;
-        $this->packageType = $packageType;
-        $this->parcelsDimensions = $parcelsDimensions;
-        $this->serviceId = $serviceId;
-        $this->awbPayment = $awbPayment;
-        $this->awbRecipient = $awbRecipient;
-        $this->insuredValue = $insuredValue;
-        $this->cashOnDeliveryAmount = $cashOnDeliveryAmount;
-        $this->cashOnDeliveryCollector = $cashOnDeliveryCollector;
-        $this->thirdPartyPickup = $thirdPartyPickup;
-        $this->serviceTaxIds = $serviceTaxIds;
+        $this->pickupPointId               = $pickupPointId;
+        $this->contactPersonId             = $contactPersonId;
+        $this->packageType                 = $packageType;
+        $this->parcelsDimensions           = $parcelsDimensions;
+        $this->serviceId                   = $serviceId;
+        $this->awbPayment                  = $awbPayment;
+        $this->awbRecipient                = $awbRecipient;
+        $this->insuredValue                = $insuredValue;
+        $this->cashOnDeliveryAmount        = $cashOnDeliveryAmount;
+        $this->cashOnDeliveryCollector     = $cashOnDeliveryCollector;
+        $this->thirdPartyPickup            = $thirdPartyPickup;
+        $this->serviceTaxIds               = $serviceTaxIds;
         $this->deliveryIntervalServiceType = $deliveryIntervalServiceType;
-        $this->reference = $reference;
-        $this->observation = $observation;
-        $this->priceObservation = $priceObservation;
-        $this->clientObservation = $clientObservation;
-        $this->lockerFirstMile = $lockerFirstMile;
-        $this->lockerLastMile = $lockerLastMile;
-        $this->oohFirstMile = $oohFirstMile;
-        $this->oohLastMile = $oohLastMile;
-        $this->currency = $currency;
+        $this->reference                   = $reference;
+        $this->observation                 = $observation;
+        $this->priceObservation            = $priceObservation;
+        $this->clientObservation           = $clientObservation;
+        $this->lockerFirstMile             = $lockerFirstMile;
+        $this->lockerLastMile              = $lockerLastMile;
+        $this->oohFirstMile                = $oohFirstMile;
+        $this->oohLastMile                 = $oohLastMile;
+        $this->currency                    = $currency;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function buildRequest()
     {
@@ -216,17 +170,17 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
         );
 
         $body = [
-            'pickupPoint' => $this->pickupPointId,
-            'contactPerson' => $this->contactPersonId,
-            'packageType' => $this->packageType->getType(),
-            'packageNumber' => count($this->parcelsDimensions),
-            'packageWeight' => $weight,
-            'service' => $this->serviceId,
-            'awbPayment' => $this->awbPayment->getType(),
-            'cashOnDelivery' => $this->cashOnDeliveryAmount,
+            'pickupPoint'           => $this->pickupPointId,
+            'contactPerson'         => $this->contactPersonId,
+            'packageType'           => $this->packageType->getType(),
+            'packageNumber'         => count($this->parcelsDimensions),
+            'packageWeight'         => $weight,
+            'service'               => $this->serviceId,
+            'awbPayment'            => $this->awbPayment->getType(),
+            'cashOnDelivery'        => $this->cashOnDeliveryAmount,
             'cashOnDeliveryReturns' => $this->cashOnDeliveryCollector ? $this->cashOnDeliveryCollector->getType() : null,
-            'insuredValue' => $this->insuredValue,
-            'thirdPartyPickup' => $this->thirdPartyPickup ? 1 : 0,
+            'insuredValue'          => $this->insuredValue,
+            'thirdPartyPickup'      => $this->thirdPartyPickup ? 1 : 0,
         ];
 
         // Third party pickup.
@@ -235,25 +189,25 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
         }
 
         $body = array_merge($body, [
-            'serviceTaxes' => $this->serviceTaxIds,
-            'deliveryInterval' => $this->deliveryIntervalServiceType ? $this->deliveryIntervalServiceType->getType() : null,
-            'awbRecipient' => $this->awbRecipient->getFields(),
-            'parcels' => array_map(
+            'serviceTaxes'            => $this->serviceTaxIds,
+            'deliveryInterval'        => $this->deliveryIntervalServiceType ? $this->deliveryIntervalServiceType->getType() : null,
+            'awbRecipient'            => $this->awbRecipient->getFields(),
+            'parcels'                 => array_map(
                 // Build parcel fields from ParcelDimensionsObject.
                 static function (ParcelDimensionsObject $parcelDimensions) {
                     return [
                         'weight' => $parcelDimensions->getWeight(),
-                        'width' => $parcelDimensions->getWidth(),
+                        'width'  => $parcelDimensions->getWidth(),
                         'length' => $parcelDimensions->getLength(),
                         'height' => $parcelDimensions->getHeight(),
                     ];
                 },
                 $this->parcelsDimensions
             ),
-            'observation' => $this->observation,
-            'priceObservation' => $this->priceObservation,
+            'observation'             => $this->observation,
+            'priceObservation'        => $this->priceObservation,
             'clientInternalReference' => $this->reference,
-            'clientObservation' => $this->clientObservation,
+            'clientObservation'       => $this->clientObservation,
         ]);
 
         if ($this->lockerFirstMile !== null) {
@@ -295,7 +249,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param int $pickupPointId
-     *
      * @return $this
      */
     public function setPickupPointId($pickupPointId)
@@ -315,7 +268,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param int|null $contactPersonId
-     *
      * @return $this
      */
     public function setContactPersonId($contactPersonId)
@@ -334,8 +286,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
     }
 
     /**
-     * @param PackageType $packageType
-     *
      * @return $this
      */
     public function setPackageType(PackageType $packageType)
@@ -355,7 +305,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param ParcelDimensionsObject[] $parcelsDimensions
-     *
      * @return $this
      */
     public function setParcelsDimensions($parcelsDimensions)
@@ -375,7 +324,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param int $serviceId
-     *
      * @return $this
      */
     public function setServiceId($serviceId)
@@ -394,8 +342,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
     }
 
     /**
-     * @param AwbPaymentType $awbPayment
-     *
      * @return $this
      */
     public function setAwbPayment(AwbPaymentType $awbPayment)
@@ -415,7 +361,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param AwbRecipientEntityObject $awbRecipient
-     *
      * @return $this
      */
     public function setAwbRecipient(AwbRecipientEntityObject|\Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject $awbRecipient)
@@ -435,7 +380,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param float $insuredValue
-     *
      * @return $this
      */
     public function setInsuredValue($insuredValue)
@@ -455,7 +399,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param float $cashOnDeliveryAmount
-     *
      * @return $this
      */
     public function setCashOnDeliveryAmount($cashOnDeliveryAmount)
@@ -475,7 +418,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param CodCollectorType|null $cashOnDeliveryCollector
-     *
      * @return $this
      */
     public function setCashOnDeliveryCollector(CodCollectorType $cashOnDeliveryCollector)
@@ -495,7 +437,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param ThirdPartyPickupEntityObject|null $thirdPartyPickup
-     *
      * @return $this
      */
     public function setThirdPartyPickup(ThirdPartyPickupEntityObject $thirdPartyPickup)
@@ -515,7 +456,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param int[] $serviceTaxIds
-     *
      * @return $this
      */
     public function setServiceTaxIds($serviceTaxIds)
@@ -535,7 +475,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param DeliveryIntervalServiceType|null $deliveryIntervalServiceType
-     *
      * @return $this
      */
     public function setDeliveryIntervalServiceType(DeliveryIntervalServiceType $deliveryIntervalServiceType)
@@ -555,7 +494,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param string|null $reference
-     *
      * @return $this
      */
     public function setReference($reference)
@@ -575,7 +513,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param string|null $observation
-     *
      * @return $this
      */
     public function setObservation($observation)
@@ -595,7 +532,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param string|null $priceObservation
-     *
      * @return $this
      */
     public function setPriceObservation($priceObservation)
@@ -615,7 +551,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param string|null $clientObservation
-     *
      * @return $this
      */
     public function setClientObservation($clientObservation)
@@ -635,7 +570,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param $lockerFirstMile
-     *
      * @return $this
      */
     public function setLockerFirstMile($lockerFirstMile)
@@ -655,7 +589,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param $lockerLastMile
-     *
      * @return $this
      */
     public function setLockerLastMile($lockerLastMile)
@@ -675,7 +608,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param $oohFirstMile
-     *
      * @return $this
      */
     public function setOohFirstMile($oohFirstMile)
@@ -695,7 +627,6 @@ class SamedayPostAwbRequest extends \Sameday\Requests\SamedayPostAwbRequest impl
 
     /**
      * @param $oohLastMile
-     *
      * @return $this
      */
     public function setOohLastMile($oohLastMile)

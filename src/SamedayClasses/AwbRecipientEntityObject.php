@@ -1,20 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Octava\Integrations\Sameday\SamedayClasses;
 
 use Sameday\Objects\PostAwb\Request\CompanyEntityObject;
 use Sameday\Objects\PostAwb\Request\EntityObject;
 
+use function array_merge;
+
 /**
  * Awb recipient entity object.
- *
- * @package Sameday
  */
 class AwbRecipientEntityObject extends EntityObject
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $email;
 
     /**
@@ -24,9 +24,7 @@ class AwbRecipientEntityObject extends EntityObject
      * @param string|null $name
      * @param string|null $phone
      * @param string|null $email
-     * @param CompanyEntityObject|null $company
-     * @param string|null $postalCode
- */
+     */
     public function __construct(
         $city = null,
         $county = null,
@@ -34,8 +32,8 @@ class AwbRecipientEntityObject extends EntityObject
         $name = null,
         $phone = null,
         $email = null,
-        CompanyEntityObject $company = null,
-        string $postalCode = null,
+        ?CompanyEntityObject $company = null,
+        ?string $postalCode = null,
     ) {
         parent::__construct($city, $county, $address, $name, $phone, $company, $postalCode);
 
@@ -43,7 +41,7 @@ class AwbRecipientEntityObject extends EntityObject
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFields()
     {
@@ -62,7 +60,6 @@ class AwbRecipientEntityObject extends EntityObject
 
     /**
      * @param string $email
-     *
      * @return $this
      */
     public function setEmail($email)

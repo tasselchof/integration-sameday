@@ -1,60 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Octava\Integrations\Sameday\SamedayClasses;
 
 use Sameday\Http\RequestBodyUrlEncoded;
 use Sameday\Http\SamedayRequest;
+use Sameday\Objects\ParcelDimensionsObject;
 use Sameday\Objects\PostAwb\Request\ThirdPartyPickupEntityObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
-use Sameday\Objects\ParcelDimensionsObject;
 use Sameday\Requests\SamedayRequestInterface;
+
+use function array_map;
+use function array_merge;
+use function count;
 
 /**
  * Request to estimate cost for an AWB.
- *
- * @package Sameday
  */
 class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEstimationRequest implements SamedayRequestInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $pickupPointId;
 
-    /**
-     * @var int|null
-     */
+    /** @var int|null */
     protected $contactPersonId;
 
-    /**
-     * @var PackageType
-     */
+    /** @var PackageType */
     protected $packageType;
 
-    /**
-     * @var ParcelDimensionsObject[]
-     */
+    /** @var ParcelDimensionsObject[] */
     protected $parcelsDimensions;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $serviceId;
 
-    /**
-     * @var AwbPaymentType
-     */
+    /** @var AwbPaymentType */
     protected $awbPayment;
 
-    /**
-     * @var AwbRecipientEntityObject
-     */
+    /** @var AwbRecipientEntityObject */
     protected $awbRecipient;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     protected $insuredValue;
 
     /**
@@ -64,32 +52,23 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
      */
     protected $cashOnDeliveryAmount;
 
-    /**
-     * @var ThirdPartyPickupEntityObject|null
-     */
+    /** @var ThirdPartyPickupEntityObject|null */
     protected $thirdPartyPickup;
 
-    /**
-     * @var int[]
-     */
+    /** @var int[] */
     protected $serviceTaxIds;
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     protected $currency;
 
     /**
      * @param $pickupPointId
      * @param $contactPersonId
-     * @param PackageType $packageType
      * @param array $parcelsDimensions
      * @param $serviceId
      * @param AwbPaymentType $awbPayment
-     * @param AwbRecipientEntityObject $awbRecipient
      * @param $insuredValue
      * @param $cashOnDeliveryAmount
-     * @param ThirdPartyPickupEntityObject|null $thirdPartyPickup
      * @param array $serviceTaxIds
      * @param $currency
      */
@@ -102,25 +81,25 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
         $insuredValue,
         $serviceId = null,
         $cashOnDeliveryAmount = .0,
-        ThirdPartyPickupEntityObject $thirdPartyPickup = null,
+        ?ThirdPartyPickupEntityObject $thirdPartyPickup = null,
         array $serviceTaxIds = [],
         $currency = null
     ) {
-        $this->pickupPointId = $pickupPointId;
-        $this->packageType = $packageType;
+        $this->pickupPointId     = $pickupPointId;
+        $this->packageType       = $packageType;
         $this->parcelsDimensions = $parcelsDimensions;
-        $this->serviceId = $serviceId;
+        $this->serviceId         = $serviceId;
 //        $this->awbPayment = $awbPayment;
-        $this->awbRecipient = $awbRecipient;
-        $this->insuredValue = $insuredValue;
+        $this->awbRecipient         = $awbRecipient;
+        $this->insuredValue         = $insuredValue;
         $this->cashOnDeliveryAmount = $cashOnDeliveryAmount;
-        $this->thirdPartyPickup = $thirdPartyPickup;
-        $this->serviceTaxIds = $serviceTaxIds;
-        $this->currency = $currency;
+        $this->thirdPartyPickup     = $thirdPartyPickup;
+        $this->serviceTaxIds        = $serviceTaxIds;
+        $this->currency             = $currency;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function buildRequest()
     {
@@ -134,14 +113,14 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
         );
 
         $body = [
-            'pickupPoint' => $this->pickupPointId,
-            'packageType' => $this->packageType->getType(),
+            'pickupPoint'   => $this->pickupPointId,
+            'packageType'   => $this->packageType->getType(),
             'packageNumber' => count($this->parcelsDimensions),
             'packageWeight' => $weight,
-            'service' => $this->serviceId,
+            'service'       => $this->serviceId,
 //            'awbPayment' => $this->awbPayment->getType(),
-            'cashOnDelivery' => $this->cashOnDeliveryAmount,
-            'insuredValue' => $this->insuredValue,
+            'cashOnDelivery'   => $this->cashOnDeliveryAmount,
+            'insuredValue'     => $this->insuredValue,
             'thirdPartyPickup' => $this->thirdPartyPickup ? 1 : 0,
         ];
 
@@ -153,18 +132,18 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
         $body = array_merge($body, [
             'serviceTaxes' => $this->serviceTaxIds,
             'awbRecipient' => $this->awbRecipient->getFields(),
-            'parcels' => array_map(
+            'parcels'      => array_map(
                 // Build parcel fields from ParcelDimensionsObject.
                 function (ParcelDimensionsObject $parcelDimensions) {
                     return [
                         'weight' => $parcelDimensions->getWeight(),
-                        'width' => $parcelDimensions->getWidth(),
+                        'width'  => $parcelDimensions->getWidth(),
                         'length' => $parcelDimensions->getLength(),
                         'height' => $parcelDimensions->getHeight(),
                     ];
                 },
                 $this->parcelsDimensions
-            )
+            ),
         ]);
 
         if ($this->currency !== null) {
@@ -190,7 +169,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param int $pickupPointId
-     *
      * @return $this
      */
     public function setPickupPointId($pickupPointId)
@@ -210,7 +188,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param int|null $contactPersonId
-     *
      * @return $this
      */
     public function setContactPersonId($contactPersonId)
@@ -229,8 +206,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
     }
 
     /**
-     * @param PackageType $packageType
-     *
      * @return $this
      */
     public function setPackageType(PackageType $packageType)
@@ -250,7 +225,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param ParcelDimensionsObject[] $parcelsDimensions
-     *
      * @return $this
      */
     public function setParcelsDimensions($parcelsDimensions)
@@ -270,7 +244,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param int $serviceId
-     *
      * @return $this
      */
     public function setServiceId($serviceId)
@@ -289,8 +262,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
     }
 
     /**
-     * @param AwbPaymentType $awbPayment
-     *
      * @return $this
      */
     public function setAwbPayment(AwbPaymentType $awbPayment)
@@ -310,7 +281,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param AwbRecipientEntityObject $awbRecipient
-     *
      * @return $this
      */
     public function setAwbRecipient(AwbRecipientEntityObject|\Sameday\Objects\PostAwb\Request\AwbRecipientEntityObject $awbRecipient)
@@ -330,7 +300,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param float $insuredValue
-     *
      * @return $this
      */
     public function setInsuredValue($insuredValue)
@@ -350,7 +319,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param float $cashOnDeliveryAmount
-     *
      * @return $this
      */
     public function setCashOnDeliveryAmount($cashOnDeliveryAmount)
@@ -370,7 +338,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param ThirdPartyPickupEntityObject|null $thirdPartyPickup
-     *
      * @return $this
      */
     public function setThirdPartyPickup(ThirdPartyPickupEntityObject $thirdPartyPickup)
@@ -390,7 +357,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param int[] $serviceTaxIds
-     *
      * @return $this
      */
     public function setServiceTaxIds($serviceTaxIds)
@@ -410,7 +376,6 @@ class SamedayPostAwbEstimationRequest extends \Sameday\Requests\SamedayPostAwbEs
 
     /**
      * @param $currency
-     *
      * @return $this
      */
     public function setCurrency($currency)
