@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
 use DateTime;
 use Exception;
