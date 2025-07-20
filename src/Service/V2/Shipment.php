@@ -17,12 +17,16 @@ use Orderadmin\DeliveryServices\Model\Feature\V2\ShipmentProviderInterface;
 use Orderadmin\DeliveryServices\Model\Feature\V2\TrackingNumberProviderInterface;
 use Orderadmin\DeliveryServices\Traits\Feature\ConnectionAwareTrait;
 use Psr\Log\LoggerInterface;
-use Sameday\Requests\SamedayPostAwbRequest;
 use Sameday\Exceptions\SamedayServerException;
+use Sameday\Requests\SamedayPostAwbRequest;
 use Sameday\Sameday;
 
+use function array_map;
+use function is_array;
+use function is_object;
 use function json_decode;
 use function json_encode;
+use function ltrim;
 use function sprintf;
 
 class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInterface
@@ -30,7 +34,7 @@ class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInter
     use ConnectionAwareTrait;
 
     protected ?DeliveryRequest $deliveryRequest = null;
-    protected ?Task $task = null;
+    protected ?Task $task                       = null;
     protected SamedayPostAwbRequest $postAwbRequest;
     protected string $trackingNumber;
 
@@ -51,43 +55,43 @@ class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInter
         if (is_array($object)) {
             return array_map([$this, 'objectToArray'], $object);
         }
-        
+
         if (is_object($object)) {
             $reflection = new \ReflectionClass($object);
             $properties = $reflection->getProperties(\ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE);
-            
+
             $array = [];
             foreach ($properties as $property) {
                 $property->setAccessible(true);
-                $value = $property->getValue($object);
+                $value        = $property->getValue($object);
                 $propertyName = $property->getName();
-                
+
                 // Convert property name from camelCase to snake_case for consistency
                 $arrayKey = ltrim($propertyName, '*');
-                
+
                 if (is_object($value) || is_array($value)) {
                     $array[$arrayKey] = $this->objectToArray($value);
                 } else {
                     $array[$arrayKey] = $value;
                 }
             }
-            
+
             return $array;
         }
-        
+
         return $object;
     }
 
     public function prepareTask(Task $task): array
     {
         // Get delivery request from task
-        $deliveryRequest = $task->getDeliveryRequest();
+        $deliveryRequest       = $task->getDeliveryRequest();
         $this->deliveryRequest = $deliveryRequest;
-        $this->task = $task;
+        $this->task            = $task;
 
         // Set up the integration context
         $this->setCarrierIntegration($deliveryRequest->getIntegration());
-        
+
         // Validate tracking number doesn't already exist
         if (! empty($deliveryRequest->getTrackingNumber())) {
             throw new DeliveryServiceException(
@@ -120,7 +124,7 @@ class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInter
         }
 
         // Handle service point and email validation
-        $email = null;
+        $email        = null;
         $servicePoint = null;
         if (! empty($deliveryRequest->getServicePoint())) {
             $servicePoint = $deliveryRequest->getServicePoint()->getExtId();
@@ -134,22 +138,21 @@ class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInter
         }
 
         // Transform delivery request to Sameday request using transformer
-        $settings = $this->source->getSettings();
-        $transformer = new ShipmentTransformer($settings);
+        $settings       = $this->source->getSettings();
+        $transformer    = new ShipmentTransformer($settings);
         $postAwbRequest = $transformer->transformDeliveryRequest($deliveryRequest);
 
         $this->postAwbRequest = $postAwbRequest;
-        
+
         return $this->objectToArray($postAwbRequest);
     }
 
-
     public function createShipment(): array
     {
-        if (!$this->deliveryRequest || !$this->task) {
+        if (! $this->deliveryRequest || ! $this->task) {
             throw new DeliveryServiceException('Delivery request or task not set. Call prepareTask() first.');
         }
-        
+
         $protectedSettings = $this->source->getSettingsProtected();
 
         // Validate credentials
@@ -168,22 +171,20 @@ class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInter
                 $protectedSettings['auth']['username'],
                 $protectedSettings['auth']['password']
             );
-            $sameday = new Sameday($samedayClient);
-            $response = $sameday->postAwb($this->postAwbRequest);
+            $sameday       = new Sameday($samedayClient);
+            $response      = $sameday->postAwb($this->postAwbRequest);
 
             $responseData = json_decode($response->getRawResponse()->getBody(), true);
 
             // Handle successful response
             if (! empty($responseData['awbNumber'])) {
-                $trackingNumber = $responseData['awbNumber'];
+                $trackingNumber       = $responseData['awbNumber'];
                 $this->trackingNumber = $trackingNumber;
 
-                $result = [
+                return [
                     'state'        => Task::STATE_CLOSED,
                     'exportResult' => $responseData,
                 ];
-
-                return $result;
             } else {
                 $errors = $responseData['errors'] ?? [];
 
@@ -191,10 +192,9 @@ class Shipment implements ShipmentProviderInterface, TrackingNumberProviderInter
 
                 throw new SamedayException('Sameday API error: ', $this->deliveryRequest, $errors);
             }
-
         } catch (SamedayServerException $e) {
             $errorsStr = $e->getRawResponse()->getBody();
-            $errors = json_decode($errorsStr, true);
+            $errors    = json_decode($errorsStr, true);
 
             $this->logger->error('Sameday API error: ' . $e->getMessage());
             throw new SamedayException('Sameday API error: ' . $e->getMessage(), $this->deliveryRequest, $errors);

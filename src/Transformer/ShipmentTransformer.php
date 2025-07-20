@@ -12,10 +12,6 @@ use Sameday\Objects\ParcelDimensionsObject;
 use Sameday\Objects\Types\AwbPaymentType;
 use Sameday\Objects\Types\PackageType;
 
-use function implode;
-use function max;
-use function round;
-
 class ShipmentTransformer
 {
     public function __construct(
@@ -41,7 +37,7 @@ class ShipmentTransformer
             $recipient = $this->getRecipientDetails($deliveryRequest);
 
             // Handle service point and email
-            $email = null;
+            $email        = null;
             $servicePoint = null;
             if (! empty($deliveryRequest->getServicePoint())) {
                 $servicePoint = $deliveryRequest->getServicePoint()->getExtId();
@@ -77,7 +73,6 @@ class ShipmentTransformer
             }
 
             return $data;
-
         } catch (\Exception $e) {
             throw new SamedayException('Failed to transform delivery request: ' . $e->getMessage());
         }

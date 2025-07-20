@@ -24,6 +24,7 @@ use function file_get_contents;
 use function file_put_contents;
 use function mkdir;
 use function sprintf;
+use function sys_get_temp_dir;
 
 class Labels implements LabelsProviderInterface
 {
@@ -45,7 +46,7 @@ class Labels implements LabelsProviderInterface
     {
         // Set up the integration context
         $this->setCarrierIntegration($deliveryRequest->getIntegration());
-        $settings = $this->source->getSettings();
+        $settings          = $this->source->getSettings();
         $protectedSettings = $this->source->getSettingsProtected();
 
         if (empty($deliveryRequest->getTrackingNumber())) {
@@ -85,12 +86,12 @@ class Labels implements LabelsProviderInterface
         // Generate or retrieve the PDF
         if (! file_exists($fileName)) {
             $samedayClient = new \Octava\Integration\Sameday\Service\SamedayClient(
-                $protectedSettings['auth']['username'], 
+                $protectedSettings['auth']['username'],
                 $protectedSettings['auth']['password']
             );
 
-            $sameday       = new Sameday($samedayClient);
-            $data          = new SamedayGetAwbPdfRequest(
+            $sameday = new Sameday($samedayClient);
+            $data    = new SamedayGetAwbPdfRequest(
                 $deliveryRequest->getTrackingNumber(),
                 new AwbPdfType($documentType)
             );

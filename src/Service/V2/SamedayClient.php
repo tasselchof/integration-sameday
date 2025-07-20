@@ -10,6 +10,8 @@ use Sameday\Requests\SamedayGetAwbStatusRequest;
 use Sameday\Requests\SamedayPostAwbRequest;
 use Sameday\SamedayClient as SamedaySdkClient;
 
+use function var_dump;
+
 class SamedayClient
 {
     private SamedaySdkClient $client;
@@ -61,7 +63,8 @@ class SamedayClient
 
             $response = $this->client->postAwb($request);
 
-            var_dump($response);die();
+            var_dump($response);
+            die();
 
             return [
                 'tracking_number' => $response->getAwbNumber(),
