@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Octava\Integrations\Sameday\Controller;
+namespace Octava\Integration\Sameday\Controller;
 
 use Laminas\I18n\Translator\TranslatorAwareInterface;
 use Laminas\Mvc\Controller\AbstractActionController;

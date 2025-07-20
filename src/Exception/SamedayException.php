@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace Octava\Integration\Sameday\Exception;
 
 use Exception;
+use Orderadmin\DeliveryServices\Exception\DeliveryRequestException;
 
-class SamedayException extends Exception
+class SamedayException extends DeliveryRequestException
 {
-    public function __construct(string $message = '', int $code = 0, ?Exception $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
 }

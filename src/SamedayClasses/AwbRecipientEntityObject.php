@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Octava\Integrations\Sameday\SamedayClasses;
+namespace Octava\Integration\Sameday\SamedayClasses;
 
 use Sameday\Objects\PostAwb\Request\CompanyEntityObject;
 use Sameday\Objects\PostAwb\Request\EntityObject;

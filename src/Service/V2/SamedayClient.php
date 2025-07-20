@@ -61,6 +61,8 @@ class SamedayClient
 
             $response = $this->client->postAwb($request);
 
+            var_dump($response);die();
+
             return [
                 'tracking_number' => $response->getAwbNumber(),
                 'awb_number'      => $response->getAwbNumber(),

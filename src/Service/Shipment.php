@@ -184,14 +184,14 @@ class Shipment extends Integration implements
             $deliveryRequest->setState(DeliveryRequest::STATE_ERROR);
             $errors = $res['errors'] ?? [];
 
-            $this->getLogger()->debug(json_encode($errors, true));
+            $this->getLogger()->debug(json_encode($errors));
             $errors[$deliveryRequest->getId()]['message']
-                = json_encode($errors, true);
+                = json_encode($errors);
 
             $this->getObjectManager()->flush();
 
             throw new DeliveryRequestException(
-                json_encode($errors, true)
+                json_encode($errors)
             );
         }
 

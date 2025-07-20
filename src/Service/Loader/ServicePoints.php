@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Octava\Integration\Sameday\Service\Loader;
 
-use Octava\Integrations\Sameday\Service\Convert;
-use Octava\Integrations\Sameday\Service\Integration;
-use Octava\Integrations\Sameday\Service\SamedayClient;
+use Octava\Integration\Sameday\Service\Convert;
+use Octava\Integration\Sameday\Service\Integration;
+use Octava\Integration\Sameday\Service\SamedayClient;
 use Orderadmin\Application\Model\LoggerAwareInterface;
 use Orderadmin\Application\Model\Manager\ObjectManagerAwareInterface;
 use Orderadmin\Application\Model\Manager\OrderadminManagerAwareInterface;

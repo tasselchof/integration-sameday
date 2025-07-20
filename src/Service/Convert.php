@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Octava\Integrations\Sameday\Service;
+namespace Octava\Integration\Sameday\Service;
 
-use Octava\Integrations\Sameday\Exception\SamedayException;
+use Octava\Integration\Sameday\Exception\SamedayException;
 use Orderadmin\DeliveryServices\Entity\DeliveryService;
 use Orderadmin\DeliveryServices\Entity\ServicePoint;
 use Orderadmin\Integrations\Entity\AbstractSource;
