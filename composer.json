@@ -61,13 +61,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Octava\\Integrations\\Sameday\\": "src/"
+      "Octava\\Integration\\Sameday\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
       "Orderadmin\\ApplicationTest\\": "vendor/orderadmin/orderadmin-application/test/",
-      "Octava\\Integrations\\SamedayTest\\": "test/"
+      "Octava\\Integration\\SamedayTest\\": "test/"
     }
   },
   "classmap": [
