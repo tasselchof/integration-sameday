@@ -17,7 +17,7 @@
       "dev-master": "0.1.x-dev"
     },
     "zf": {
-      "module": "Octava\\Integrations\\Sameday"
+      "module": "Octava\\Integration\\Sameday"
     }
   },
   "repositories": [
